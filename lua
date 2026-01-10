@@ -208,7 +208,7 @@ local function createPowerActivationEffect(powerName, color)
             local shopButton = Instance.new("ImageButton")
             shopButton.Name = "ShopButton"
             shopButton.Size = UDim2.new(0, 36, 0, 36)
-            shopButton.Position = UDim2.new(0, 145, 0, 44)
+            shopButton.Position = UDim2.new(0, 145, 0, 10)
             shopButton.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
             shopButton.BackgroundTransparency = 0.1
             shopButton.BorderSizePixel = 0
@@ -504,115 +504,240 @@ local function createPowerActivationEffect(powerName, color)
             innerCorner.CornerRadius = UDim.new(0, 13)
             innerCorner.Parent = innerGlow
             
-            -- ICONO
+            -- ICONO MEJORADO (MÁS GRANDE Y ANIMADO)
             local iconContainer = Instance.new("Frame")
-            iconContainer.Size = UDim2.new(0, 170, 0, 170)
-            iconContainer.Position = UDim2.new(0, 10, 0, 10)
-            iconContainer.BackgroundColor3 = Color3.fromRGB(30, 30, 40)
+            iconContainer.Size = UDim2.new(0, 200, 0, 200)
+            iconContainer.Position = UDim2.new(0, 20, 0, 20)
+            iconContainer.BackgroundColor3 = Color3.fromRGB(15, 15, 25)
             iconContainer.BorderSizePixel = 0
             iconContainer.ZIndex = 5003
             iconContainer.Parent = productBox
             
             local iconCorner = Instance.new("UICorner")
-            iconCorner.CornerRadius = UDim.new(0, 10)
+            iconCorner.CornerRadius = UDim.new(0, 15)
             iconCorner.Parent = iconContainer
             
             local iconStroke = Instance.new("UIStroke")
-            iconStroke.Color = Color3.fromRGB(100, 100, 120)
-            iconStroke.Thickness = 2
+            iconStroke.Color = Color3.fromRGB(138, 43, 226)
+            iconStroke.Thickness = 3
+            iconStroke.Transparency = 0.3
             iconStroke.Parent = iconContainer
+            
+            -- EFECTO PARTÍCULAS ALREDEDOR DEL ICONO
+            for i = 1, 8 do
+                local particle = Instance.new("Frame")
+                particle.Size = UDim2.new(0, 4, 0, 4)
+                particle.BackgroundColor3 = Color3.fromRGB(255, 100, 255)
+                particle.BorderSizePixel = 0
+                particle.ZIndex = 5005
+                particle.Parent = iconContainer
+                
+                local particleCorner = Instance.new("UICorner")
+                particleCorner.CornerRadius = UDim.new(1, 0)
+                particleCorner.Parent = particle
+                
+                -- Animación orbital
+                task.spawn(function()
+                    local angle = (i - 1) * (360 / 8)
+                    while particle.Parent do
+                        local radius = 90
+                        local x = math.cos(math.rad(angle)) * radius + 98
+                        local y = math.sin(math.rad(angle)) * radius + 98
+                        particle.Position = UDim2.new(0, x, 0, y)
+                        angle = angle + 2
+                        task.wait(0.05)
+                    end
+                end)
+            end
             
             local powerIcon = Instance.new("TextLabel")
             powerIcon.Name = "PowerIcon"
             powerIcon.Size = UDim2.new(1, 0, 1, 0)
             powerIcon.BackgroundTransparency = 1
             powerIcon.Text = "?"
-            powerIcon.TextSize = 90
+            powerIcon.TextSize = 120
             powerIcon.TextColor3 = Color3.fromRGB(255, 255, 255)
+            powerIcon.TextStrokeTransparency = 0
+            powerIcon.TextStrokeColor3 = Color3.fromRGB(138, 43, 226)
             powerIcon.ZIndex = 5004
             powerIcon.Parent = iconContainer
             
-            -- INFO
+            -- Animación de pulso del icono
+            task.spawn(function()
+                while powerIcon.Parent do
+                    TweenService:Create(powerIcon, TweenInfo.new(1, Enum.EasingStyle.Sine), {
+                        TextSize = 130
+                    }):Play()
+                    task.wait(1)
+                    TweenService:Create(powerIcon, TweenInfo.new(1, Enum.EasingStyle.Sine), {
+                        TextSize = 120
+                    }):Play()
+                    task.wait(1)
+                end
+            end)
+            
+            -- INFO MEJORADA CON EFECTOS
             local infoContainer = Instance.new("Frame")
-            infoContainer.Size = UDim2.new(1, -200, 1, -20)
-            infoContainer.Position = UDim2.new(0, 190, 0, 10)
+            infoContainer.Size = UDim2.new(1, -250, 1, -40)
+            infoContainer.Position = UDim2.new(0, 240, 0, 20)
             infoContainer.BackgroundTransparency = 1
             infoContainer.ZIndex = 5003
             infoContainer.Parent = productBox
             
+            -- FONDO CON GRADIENTE PARA LA INFO
+            local infoBg = Instance.new("Frame")
+            infoBg.Size = UDim2.new(1, 0, 1, 0)
+            infoBg.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
+            infoBg.BackgroundTransparency = 0.3
+            infoBg.BorderSizePixel = 0
+            infoBg.ZIndex = 5002
+            infoBg.Parent = infoContainer
+            
+            local infoBgCorner = Instance.new("UICorner")
+            infoBgCorner.CornerRadius = UDim.new(0, 12)
+            infoBgCorner.Parent = infoBg
+            
+            local infoGradient = Instance.new("UIGradient")
+            infoGradient.Color = ColorSequence.new{
+                ColorSequenceKeypoint.new(0, Color3.fromRGB(35, 25, 45)),
+                ColorSequenceKeypoint.new(1, Color3.fromRGB(25, 25, 35))
+            }
+            infoGradient.Rotation = 45
+            infoGradient.Parent = infoBg
+            
             local powerName = Instance.new("TextLabel")
             powerName.Name = "PowerName"
-            powerName.Size = UDim2.new(1, 0, 0, 40)
-            powerName.Position = UDim2.new(0, 5, 0, 0)
+            powerName.Size = UDim2.new(1, -20, 0, 50)
+            powerName.Position = UDim2.new(0, 10, 0, 10)
             powerName.BackgroundTransparency = 1
             powerName.Text = "POWER NAME"
             powerName.Font = Enum.Font.GothamBold
-            powerName.TextSize = 26
+            powerName.TextSize = 32
             powerName.TextColor3 = Color3.fromRGB(255, 255, 255)
             powerName.TextXAlignment = Enum.TextXAlignment.Left
-            powerName.TextStrokeTransparency = 0.5
+            powerName.TextStrokeTransparency = 0
+            powerName.TextStrokeColor3 = Color3.fromRGB(255, 0, 100)
             powerName.ZIndex = 5004
             powerName.Parent = infoContainer
             
+            -- Efecto parpadeo en el nombre
+            task.spawn(function()
+                while powerName.Parent do
+                    task.wait(math.random(4, 10))
+                    for i = 1, 2 do
+                        powerName.TextTransparency = 0.5
+                        task.wait(0.1)
+                        powerName.TextTransparency = 0
+                        task.wait(0.1)
+                    end
+                end
+            end)
+            
             local stockLabel = Instance.new("TextLabel")
             stockLabel.Name = "StockLabel"
-            stockLabel.Size = UDim2.new(0, 150, 0, 25)
-            stockLabel.Position = UDim2.new(0, 5, 0, 45)
+            stockLabel.Size = UDim2.new(0, 200, 0, 30)
+            stockLabel.Position = UDim2.new(0, 10, 0, 65)
             stockLabel.BackgroundTransparency = 1
             stockLabel.Text = "✓ DISPONIBLE"
             stockLabel.Font = Enum.Font.GothamBold
-            stockLabel.TextSize = 15
+            stockLabel.TextSize = 18
             stockLabel.TextColor3 = Color3.fromRGB(100, 255, 100)
             stockLabel.TextXAlignment = Enum.TextXAlignment.Left
+            stockLabel.TextStrokeTransparency = 0.5
             stockLabel.ZIndex = 5004
             stockLabel.Parent = infoContainer
             
             local priceLabel = Instance.new("TextLabel")
             priceLabel.Name = "PriceLabel"
-            priceLabel.Size = UDim2.new(1, -10, 0, 45)
-            priceLabel.Position = UDim2.new(0, 5, 0, 75)
+            priceLabel.Size = UDim2.new(1, -20, 0, 55)
+            priceLabel.Position = UDim2.new(0, 10, 0, 100)
             priceLabel.BackgroundTransparency = 1
             priceLabel.Text = "FREE"
             priceLabel.Font = Enum.Font.GothamBold
-            priceLabel.TextSize = 36
+            priceLabel.TextSize = 42
             priceLabel.TextColor3 = Color3.fromRGB(100, 255, 100)
             priceLabel.TextXAlignment = Enum.TextXAlignment.Left
+            priceLabel.TextStrokeTransparency = 0
+            priceLabel.TextStrokeColor3 = Color3.fromRGB(0, 200, 0)
             priceLabel.ZIndex = 5004
             priceLabel.Parent = infoContainer
             
             local rarityBadge = Instance.new("TextLabel")
             rarityBadge.Name = "RarityBadge"
-            rarityBadge.Size = UDim2.new(0, 100, 0, 32)
-            rarityBadge.Position = UDim2.new(0, 5, 0, 130)
+            rarityBadge.Size = UDim2.new(0, 120, 0, 35)
+            rarityBadge.Position = UDim2.new(0, 10, 0, 165)
             rarityBadge.BackgroundColor3 = Color3.fromRGB(100, 150, 255)
             rarityBadge.Text = "Rare"
             rarityBadge.Font = Enum.Font.GothamBold
-            rarityBadge.TextSize = 16
+            rarityBadge.TextSize = 18
             rarityBadge.TextColor3 = Color3.fromRGB(255, 255, 255)
+            rarityBadge.TextStrokeTransparency = 0.3
             rarityBadge.ZIndex = 5004
             rarityBadge.Parent = infoContainer
             
             local rarityCorner = Instance.new("UICorner")
-            rarityCorner.CornerRadius = UDim.new(0, 6)
+            rarityCorner.CornerRadius = UDim.new(0, 8)
             rarityCorner.Parent = rarityBadge
             
-            -- BOTÓN DE ACCIÓN
+            local rarityGlow = Instance.new("UIStroke")
+            rarityGlow.Color = Color3.fromRGB(150, 200, 255)
+            rarityGlow.Thickness = 2
+            rarityGlow.Transparency = 0.4
+            rarityGlow.Parent = rarityBadge
+            
+            -- BOTÓN DE ACCIÓN MEJORADO
             local actionButton = Instance.new("TextButton")
             actionButton.Name = "ActionButton"
-            actionButton.Size = UDim2.new(0, 180, 0, 45)
-            actionButton.Position = UDim2.new(1, -190, 0, 120)
+            actionButton.Size = UDim2.new(0, 200, 0, 50)
+            actionButton.Position = UDim2.new(1, -220, 0, 180)
             actionButton.BackgroundColor3 = Color3.fromRGB(100, 255, 100)
             actionButton.Text = "🎁 OBTENER GRATIS"
             actionButton.Font = Enum.Font.GothamBold
-            actionButton.TextSize = 18
+            actionButton.TextSize = 20
             actionButton.TextColor3 = Color3.fromRGB(0, 0, 0)
             actionButton.BorderSizePixel = 0
             actionButton.ZIndex = 5004
             actionButton.Parent = infoContainer
             
             local actionCorner = Instance.new("UICorner")
-            actionCorner.CornerRadius = UDim.new(0, 8)
+            actionCorner.CornerRadius = UDim.new(0, 12)
             actionCorner.Parent = actionButton
+            
+            local actionGlow = Instance.new("UIStroke")
+            actionGlow.Color = Color3.fromRGB(150, 255, 150)
+            actionGlow.Thickness = 3
+            actionGlow.Transparency = 0.3
+            actionGlow.Parent = actionButton
+            
+            -- Animación de pulso del botón
+            task.spawn(function()
+                while actionButton.Parent do
+                    TweenService:Create(actionGlow, TweenInfo.new(1, Enum.EasingStyle.Sine), {
+                        Transparency = 0.1
+                    }):Play()
+                    task.wait(1)
+                    TweenService:Create(actionGlow, TweenInfo.new(1, Enum.EasingStyle.Sine), {
+                        Transparency = 0.5
+                    }):Play()
+                    task.wait(1)
+                end
+            end)
+            
+            -- Efecto hover mejorado
+            actionButton.MouseEnter:Connect(function()
+                TweenService:Create(actionButton, TweenInfo.new(0.2), {
+                    Size = UDim2.new(0, 210, 0, 55),
+                    BackgroundColor3 = Color3.fromRGB(150, 255, 150)
+                }):Play()
+                TweenService:Create(actionGlow, TweenInfo.new(0.2), {Transparency = 0}):Play()
+            end)
+            actionButton.MouseLeave:Connect(function()
+                TweenService:Create(actionButton, TweenInfo.new(0.2), {
+                    Size = UDim2.new(0, 200, 0, 50),
+                    BackgroundColor3 = Color3.fromRGB(100, 255, 100)
+                }):Play()
+                TweenService:Create(actionGlow, TweenInfo.new(0.2), {Transparency = 0.3}):Play()
+            end)
             
             -- DESCRIPCIÓN
             local descText = Instance.new("TextLabel")
