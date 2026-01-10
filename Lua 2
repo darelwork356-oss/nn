@@ -1,0 +1,369 @@
+--[[
+⚡ STORM GENERATOR: STRANGER THINGS EDITION (ULTIMATE VISUALS) ⚡
+ 
+Características Épicas:
+- Rayos con Núcleo y Resplandor (Doble capa).
+- Texturas de electricidad fluyendo.
+- Explosiones de partículas (Humo, Chispas, Onda de choque).
+- Iluminación volumétrica intensa.
+- Sonido dinámico con variación de tono.
+ 
+Pegar en: ServerScriptService
+]]
+
+local Workspace = game:GetService("Workspace")
+local Debris = game:GetService("Debris")
+local Players = game:GetService("Players")
+local Lighting = game:GetService("Lighting")
+local TweenService = game:GetService("TweenService")
+
+math.randomseed(tick())
+
+-- ======== CONFIGURACIÓN VISUAL "SOBRENATURAL" ========
+local INTERVALO_RAFAGA = 6                -- Segundos entre el caos
+local RAYOS_POR_RAFAGA = 200              -- Cantidad de rayos (Cuidado: Muy alto = Lag si tienes PCs bajos)
+local RAYO_ALTURA_MAXIMA = 4000
+local DURACION_FLASH = 0.4                -- Los rayos se quedan un poco más para ser vistos
+
+-- COLORES (Estilo Stranger Things / Mind Flayer)
+local COLOR_NUCLEO = Color3.fromRGB(255, 255, 255) -- El centro del rayo (blanco caliente)
+local COLOR_BORDE = Color3.fromRGB(255, 0, 0)      -- El resplandor (Rojo sangre)
+
+-- TEXTURAS
+local TEXTURA_RAYO = "rbxassetid://4483431961" -- Textura de electricidad jagged
+
+-- ======= AUDIO (POOL MEJORADO) =======
+local SOUND_ID = "rbxassetid://130457325001606" -- Sonido de trueno realista
+local SOUND_VOLUME = 2.5                        -- Mucho más fuerte
+local SOUND_MAX_DIST = 3000                     -- Se escucha desde muy lejos
+local SOUND_POOL_SIZE = 20                      -- Más sonidos simultáneos
+
+-- ======= ZIGZAG EXTREMO =======
+local SEGMENTOS_ZIGZAG = 12
+local DESVIACION_MAXIMA = 45              -- Rayos muy caóticos
+local VARIACION_SEGMENTO = 25
+local GROSOR_BEAM_BASE = 2.5              -- Rayos más gruesos
+local GROSOR_FINAL_MULT = 3.0
+
+-- ÁREA (Se auto-ajusta, valores base)
+local AREA_DE_GOLPE = Vector3.new(4000, 50, 4000)
+
+-- ======= CREACIÓN DEL POOL DE SONIDOS =======
+local SoundPool = {}
+local soundPoolIndex = 1
+
+local function crearPoolSonidos()
+    local poolFolder = Instance.new("Folder")
+    poolFolder.Name = "EpicStorm_Sounds"
+    poolFolder.Parent = Workspace
+    
+    for i = 1, SOUND_POOL_SIZE do
+        local spPart = Instance.new("Part")
+        spPart.Size = Vector3.new(0.1, 0.1, 0.1)
+        spPart.Anchored = true
+        spPart.CanCollide = false
+        spPart.Transparency = 1
+        spPart.Position = Vector3.new(0, -5000, 0)
+        spPart.Parent = poolFolder
+        
+        local s = Instance.new("Sound")
+        s.Name = "Thunder"
+        s.Parent = spPart
+        s.SoundId = SOUND_ID
+        s.Volume = SOUND_VOLUME
+        s.RollOffMode = Enum.RollOffMode.InverseTapered -- Mejor atenuación realista
+        s.MaxDistance = SOUND_MAX_DIST
+        
+        table.insert(SoundPool, {part = spPart, sound = s})
+    end
+end
+
+local function playThunderAt(position)
+    local entry = SoundPool[soundPoolIndex]
+    if not entry then return end
+    
+    entry.part.Position = position
+    if entry.sound.Playing then entry.sound:Stop() end
+    
+    -- Variación de Pitch para realismo (Unos truenos rugen graves, otros estallan agudos)
+    entry.sound.PlaybackSpeed = 0.8 + (math.random() * 0.4) 
+    entry.sound:Play()
+    
+    soundPoolIndex = soundPoolIndex + 1
+    if soundPoolIndex > #SoundPool then soundPoolIndex = 1 end
+end
+
+-- ======= UTILIDADES =======
+local function randFloat(a, b) return a + math.random() * (b - a) end
+
+local function ajustarAreaSegunMapa()
+    local mapBounds = Workspace:FindFirstChild("MapBounds") or Workspace:FindFirstChild("Map")
+    if mapBounds then
+        if mapBounds:IsA("BasePart") then
+            AREA_DE_GOLPE = Vector3.new(mapBounds.Size.X + 500, 100, mapBounds.Size.Z + 500)
+        elseif mapBounds:IsA("Model") then
+            local size = mapBounds:GetExtentsSize()
+            AREA_DE_GOLPE = Vector3.new(size.X + 500, 100, size.Z + 500)
+        end
+    end
+end
+
+local function raycastAlSuelo(x, z)
+    local origen = Vector3.new(x, RAYO_ALTURA_MAXIMA, z)
+    local params = RaycastParams.new()
+    params.FilterType = Enum.RaycastFilterType.Blacklist
+    params.FilterDescendantsInstances = {} -- Añadir filtros si es necesario
+    
+    local res = Workspace:Raycast(origen, Vector3.new(0, -RAYO_ALTURA_MAXIMA * 2, 0), params)
+    if res then
+        return res.Position, origen.Y, res.Instance
+    else
+        return Vector3.new(x, 0, z), origen.Y, nil
+    end
+end
+
+-- ======= SISTEMA DE PARTÍCULAS (EFECTOS ESPECIALES) =======
+local function crearEfectosImpacto(parent, position)
+    -- 1. Onda de Choque (Anillo en el suelo)
+    local shockwave = Instance.new("Part")
+    shockwave.Size = Vector3.new(1, 1, 1)
+    shockwave.Anchored = true
+    shockwave.CanCollide = false
+    shockwave.Transparency = 1
+    shockwave.Position = position
+    shockwave.Parent = parent
+    
+    local shockAttach = Instance.new("Attachment", shockwave)
+    
+    local pWave = Instance.new("ParticleEmitter")
+    pWave.Texture = "rbxassetid://292289455" -- Anillo textura
+    pWave.Size = NumberSequence.new({NumberSequenceKeypoint.new(0, 5), NumberSequenceKeypoint.new(1, 40)})
+    pWave.Transparency = NumberSequence.new({NumberSequenceKeypoint.new(0, 0), NumberSequenceKeypoint.new(1, 1)})
+    pWave.Lifetime = NumberRange.new(0.5)
+    pWave.Rate = 0
+    pWave.Speed = NumberRange.new(0)
+    pWave.Color = ColorSequence.new(COLOR_BORDE)
+    pWave.Orientation = Enum.ParticleOrientation.VelocityPerpendicular
+    pWave.Parent = shockAttach
+    pWave:Emit(1) -- Emitir solo 1 anillo
+    
+    -- 2. Chispas Eléctricas
+    local pSparks = Instance.new("ParticleEmitter")
+    pSparks.Texture = "rbxassetid://277033580" -- Spark texture
+    pSparks.Color = ColorSequence.new(COLOR_NUCLEO)
+    pSparks.Size = NumberSequence.new(0.8, 0)
+    pSparks.Lifetime = NumberRange.new(0.5, 1.5)
+    pSparks.Speed = NumberRange.new(20, 60)
+    pSparks.SpreadAngle = Vector2.new(180, 180)
+    pSparks.Drag = 5
+    pSparks.LightEmission = 1
+    pSparks.Rate = 0
+    pSparks.Parent = shockAttach
+    pSparks:Emit(30)
+    
+    -- 3. Humo Oscuro (Upside Down vibe)
+    local pSmoke = Instance.new("ParticleEmitter")
+    pSmoke.Texture = "rbxassetid://243661800" -- Smoke texture
+    pSmoke.Color = ColorSequence.new(Color3.new(0,0,0))
+    pSmoke.Size = NumberSequence.new({NumberSequenceKeypoint.new(0, 4), NumberSequenceKeypoint.new(1, 12)})
+    pSmoke.Transparency = NumberSequence.new({NumberSequenceKeypoint.new(0, 0.4), NumberSequenceKeypoint.new(1, 1)})
+    pSmoke.Lifetime = NumberRange.new(2, 4)
+    pSmoke.Speed = NumberRange.new(5, 15)
+    pSmoke.Acceleration = Vector3.new(0, 10, 0) -- Sube hacia arriba
+    pSmoke.Rate = 0
+    pSmoke.Parent = shockAttach
+    pSmoke:Emit(10)
+    
+    -- Luz dramática en el suelo
+    local light = Instance.new("PointLight")
+    light.Color = COLOR_BORDE
+    light.Range = 60
+    light.Brightness = 50
+    light.Shadows = true -- Sombras activadas para realismo
+    light.Parent = shockwave
+    
+    -- Tween para apagar la luz
+    local tweenInfo = TweenInfo.new(DURACION_FLASH * 2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+    local tween = TweenService:Create(light, tweenInfo, {Brightness = 0, Range = 0})
+    tween:Play()
+end
+
+-- ======= GENERACIÓN DE RAYO =======
+local function crearRayoEpico(posImpacto, alturaCielo, esCercano)
+    local alturaTotal = alturaCielo - posImpacto.Y
+    if alturaTotal <= 1 then return end
+    
+    local rayoFolder = Instance.new("Folder")
+    rayoFolder.Name = "Storm_Bolt"
+    rayoFolder.Parent = Workspace
+    Debris:AddItem(rayoFolder, DURACION_FLASH + 1) -- Limpieza automática
+    
+    -- Generar puntos del rayo
+    local puntos = {}
+    local origenX, origenZ = posImpacto.X, posImpacto.Z
+    
+    for i = 0, SEGMENTOS_ZIGZAG do
+        local t = i / SEGMENTOS_ZIGZAG
+        local y = alturaCielo - (t * alturaTotal)
+        
+        -- Cálculo de caos para zigzag
+        local caos = (math.sin(t * math.pi * 10) * 0.5) + 0.5 -- Factor ondulante
+        local range = (DESVIACION_MAXIMA * caos) + VARIACION_SEGMENTO
+        
+        local dx = (math.random() - 0.5) * 2 * range
+        local dz = (math.random() - 0.5) * 2 * range
+        
+        -- Si es el último punto, forzar impacto exacto
+        if i == SEGMENTOS_ZIGZAG then
+            table.insert(puntos, posImpacto)
+        else
+            table.insert(puntos, Vector3.new(origenX + dx, y, origenZ + dz))
+        end
+    end
+    
+    -- Crear Attachments
+    local atts = {}
+    for _, pPos in ipairs(puntos) do
+        local p = Instance.new("Part")
+        p.Size = Vector3.new(0.1, 0.1, 0.1)
+        p.Transparency = 1
+        p.Anchored = true
+        p.CanCollide = false
+        p.Position = pPos
+        p.Parent = rayoFolder
+        local att = Instance.new("Attachment", p)
+        table.insert(atts, att)
+    end
+    
+    -- Conectar Beams
+    for i = 1, #atts - 1 do
+        local a1, a2 = atts[i], atts[i+1]
+        
+        -- BEAM 1: NÚCLEO (Brillante y fino)
+        local beamCore = Instance.new("Beam")
+        beamCore.Attachment0 = a1
+        beamCore.Attachment1 = a2
+        beamCore.Color = ColorSequence.new(COLOR_NUCLEO)
+        beamCore.Width0 = GROSOR_BEAM_BASE * 0.6
+        beamCore.Width1 = GROSOR_BEAM_BASE * 0.6
+        beamCore.FaceCamera = true
+        beamCore.LightEmission = 1
+        beamCore.Transparency = NumberSequence.new(0)
+        beamCore.Texture = TEXTURA_RAYO
+        beamCore.TextureMode = Enum.TextureMode.Wrap
+        beamCore.TextureLength = 10
+        beamCore.TextureSpeed = 2 -- Movimiento rápido
+        beamCore.Parent = rayoFolder
+        
+        -- BEAM 2: GLOW (Ancho y colorido)
+        local beamGlow = Instance.new("Beam")
+        beamGlow.Attachment0 = a1
+        beamGlow.Attachment1 = a2
+        beamGlow.Color = ColorSequence.new(COLOR_BORDE)
+        beamGlow.Width0 = GROSOR_BEAM_BASE * 1.8
+        beamGlow.Width1 = GROSOR_BEAM_BASE * 2.5
+        beamGlow.FaceCamera = true
+        beamGlow.LightEmission = 0.8
+        beamGlow.Transparency = NumberSequence.new({
+        NumberSequenceKeypoint.new(0, 0.4),
+        NumberSequenceKeypoint.new(0.5, 0.2),
+        NumberSequenceKeypoint.new(1, 0.4)
+        })
+        beamGlow.Texture = "rbxassetid://4483431961" 
+        beamGlow.TextureSpeed = 2.5
+        beamGlow.Parent = rayoFolder
+    end
+    
+    -- CILINDRO DE IMPACTO (El pilar de luz al tocar el suelo)
+    local hitPillar = Instance.new("Part")
+    hitPillar.Anchored = true
+    hitPillar.CanCollide = false
+    hitPillar.Shape = Enum.PartType.Cylinder
+    hitPillar.Size = Vector3.new(100, 2, 2) -- Largo vertical
+    hitPillar.Position = posImpacto + Vector3.new(0, 50, 0)
+    hitPillar.Orientation = Vector3.new(0, 0, 90)
+    hitPillar.Material = Enum.Material.Neon
+    hitPillar.Color = COLOR_BORDE
+    hitPillar.Transparency = 0.5
+    hitPillar.Parent = rayoFolder
+    
+    -- TWEENS para desvanecer visuales
+    task.delay(0.05, function()
+        if not rayoFolder.Parent then return end
+        for _, obj in ipairs(rayoFolder:GetDescendants()) do
+            if obj:IsA("Beam") then
+                TweenService:Create(obj, TweenInfo.new(DURACION_FLASH), {Transparency = NumberSequence.new(1)}):Play()
+            elseif obj:IsA("BasePart") and obj ~= hitPillar then
+                -- nada
+            elseif obj == hitPillar then
+                TweenService:Create(obj, TweenInfo.new(DURACION_FLASH), {Transparency = 1, Size = Vector3.new(0,0,0)}):Play()
+            end
+        end
+    end)
+    
+    -- EFECTOS FINALES (Sonido y Partículas)
+    if esCercano or math.random() < 0.3 then
+        crearEfectosImpacto(rayoFolder, posImpacto)
+        playThunderAt(posImpacto)
+        
+        -- Sacudida "falsa" (Explosión sin daño para mover piezas sueltas)
+        local shake = Instance.new("Explosion")
+        shake.Position = posImpacto
+        shake.BlastRadius = 0 -- Solo visual/física, sin daño
+        shake.BlastPressure = 2000 -- Empuja objetos sueltos ligeramente
+        shake.Visible = false
+        shake.Parent = Workspace
+    end
+end
+
+-- ======= BUCLE PRINCIPAL =======
+local function iniciarTormentaSuprema()
+    ajustarAreaSegunMapa()
+    crearPoolSonidos()
+    
+    warn("⚡ STRANGER STORM ACTIVADA ⚡")
+    
+    while true do
+        task.wait(INTERVALO_RAFAGA)
+        
+        -- Lógica de Spawn optimizada
+        local players = Players:GetPlayers()
+        
+        -- 1. Rayos cerca de jugadores (Máxima calidad)
+        for _, plr in ipairs(players) do
+            if plr.Character and plr.Character:FindFirstChild("HumanoidRootPart") then
+                local root = plr.Character.HumanoidRootPart
+                -- 3 a 5 rayos muy cercanos por jugador
+                for i = 1, math.random(3, 5) do
+                    local angle = randFloat(0, math.pi * 2)
+                    local dist = randFloat(20, 150)
+                    local tPos = root.Position + Vector3.new(math.cos(angle)*dist, 0, math.sin(angle)*dist)
+                    
+                    local finalPos, skyY = raycastAlSuelo(tPos.X, tPos.Z)
+                    crearRayoEpico(finalPos, skyY, true)
+                    task.wait(0.05) -- Pequeño delay para sensación de "barrido"
+                end
+            end
+        end
+        
+        -- 2. Rayos aleatorios en el mapa (Relleno)
+        for i = 1, RAYOS_POR_RAFAGA do
+            local rx = (math.random() - 0.5) * AREA_DE_GOLPE.X
+            local rz = (math.random() - 0.5) * AREA_DE_GOLPE.Z
+            
+            -- Verificar si está lejos de jugadores para ahorrar recursos
+            local esCercano = false
+            -- (Omitimos chequeo de distancia estricto para rendimiento, usamos aleatoriedad)
+            if math.random() < 0.05 then esCercano = true end 
+                
+                local finalPos, skyY = raycastAlSuelo(rx, rz)
+                crearRayoEpico(finalPos, skyY, esCercano)
+                
+                if i % 20 == 0 then task.wait() end -- Evitar congelar el server
+                end
+                end
+                end
+                    
+                    task.spawn(iniciarTormentaSuprema)
+                    
+                    
