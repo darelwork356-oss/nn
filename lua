@@ -208,7 +208,7 @@ local function createPowerActivationEffect(powerName, color)
             local shopButton = Instance.new("ImageButton")
             shopButton.Name = "ShopButton"
             shopButton.Size = UDim2.new(0, 36, 0, 36)
-            shopButton.Position = UDim2.new(0, 145, 0, 10)
+            shopButton.Position = UDim2.new(0, 145, 0, 25)
             shopButton.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
             shopButton.BackgroundTransparency = 0.1
             shopButton.BorderSizePixel = 0
@@ -371,20 +371,35 @@ local function createPowerActivationEffect(powerName, color)
             headerGradient.Rotation = 45
             headerGradient.Parent = header
             
-            -- LOGO STRANGER THINGS
+            -- LOGO STRANGER THINGS CON MÁS ESTILO
             local logo = Instance.new("TextLabel")
             logo.Size = UDim2.new(0, 400, 0, 50)
             logo.Position = UDim2.new(0, 30, 0, 15)
             logo.BackgroundTransparency = 1
-            logo.Text = "STRANGER POWERS SHOP"
+            logo.Text = "S T R A N G E R   P O W E R S"
             logo.Font = Enum.Font.GothamBold
-            logo.TextSize = 28
-            logo.TextColor3 = Color3.fromRGB(255, 255, 255)
+            logo.TextSize = 24
+            logo.TextColor3 = Color3.fromRGB(255, 50, 50)
             logo.TextStrokeTransparency = 0
-            logo.TextStrokeColor3 = Color3.fromRGB(255, 0, 100)
+            logo.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
             logo.TextXAlignment = Enum.TextXAlignment.Left
             logo.ZIndex = 5002
             logo.Parent = header
+            
+            -- SUBTITULO
+            local subtitle = Instance.new("TextLabel")
+            subtitle.Size = UDim2.new(0, 300, 0, 25)
+            subtitle.Position = UDim2.new(0, 30, 0, 50)
+            subtitle.BackgroundTransparency = 1
+            subtitle.Text = "THE UPSIDE DOWN SHOP"
+            subtitle.Font = Enum.Font.Gotham
+            subtitle.TextSize = 14
+            subtitle.TextColor3 = Color3.fromRGB(100, 150, 255)
+            subtitle.TextStrokeTransparency = 0.3
+            subtitle.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
+            subtitle.TextXAlignment = Enum.TextXAlignment.Left
+            subtitle.ZIndex = 5002
+            subtitle.Parent = header
             
             -- EFECTO PARPADEO EN EL LOGO
             task.spawn(function()
@@ -685,19 +700,19 @@ local function createPowerActivationEffect(powerName, color)
             rarityGlow.Transparency = 0.4
             rarityGlow.Parent = rarityBadge
             
-            -- BOTÓN DE ACCIÓN MEJORADO
+            -- BOTÓN DE ACCIÓN BIEN POSICIONADO
             local actionButton = Instance.new("TextButton")
             actionButton.Name = "ActionButton"
-            actionButton.Size = UDim2.new(0, 200, 0, 50)
-            actionButton.Position = UDim2.new(1, -220, 0, 180)
+            actionButton.Size = UDim2.new(0, 180, 0, 45)
+            actionButton.Position = UDim2.new(0, 240, 0, 180)
             actionButton.BackgroundColor3 = Color3.fromRGB(100, 255, 100)
             actionButton.Text = "🎁 OBTENER GRATIS"
             actionButton.Font = Enum.Font.GothamBold
-            actionButton.TextSize = 20
+            actionButton.TextSize = 18
             actionButton.TextColor3 = Color3.fromRGB(0, 0, 0)
             actionButton.BorderSizePixel = 0
             actionButton.ZIndex = 5004
-            actionButton.Parent = infoContainer
+            actionButton.Parent = productBox
             
             local actionCorner = Instance.new("UICorner")
             actionCorner.CornerRadius = UDim.new(0, 12)
@@ -739,21 +754,32 @@ local function createPowerActivationEffect(powerName, color)
                 TweenService:Create(actionGlow, TweenInfo.new(0.2), {Transparency = 0.3}):Play()
             end)
             
-            -- DESCRIPCIÓN
+            -- DESCRIPCIÓN BIEN POSICIONADA
             local descText = Instance.new("TextLabel")
             descText.Name = "DescriptionText"
-            descText.Size = UDim2.new(1, -40, 0, 50)
-            descText.Position = UDim2.new(0, 20, 0, 270)
-            descText.BackgroundTransparency = 1
+            descText.Size = UDim2.new(1, -40, 0, 60)
+            descText.Position = UDim2.new(0, 20, 0, 370)
+            descText.BackgroundColor3 = Color3.fromRGB(15, 15, 25)
+            descText.BackgroundTransparency = 0.3
             descText.Text = "Descripción del poder..."
             descText.Font = Enum.Font.Gotham
-            descText.TextSize = 15
+            descText.TextSize = 16
             descText.TextColor3 = Color3.fromRGB(220, 220, 220)
             descText.TextWrapped = true
-            descText.TextXAlignment = Enum.TextXAlignment.Left
-            descText.TextYAlignment = Enum.TextYAlignment.Top
+            descText.TextXAlignment = Enum.TextXAlignment.Center
+            descText.TextYAlignment = Enum.TextYAlignment.Center
             descText.ZIndex = 5003
             descText.Parent = shopModal
+            
+            local descCorner = Instance.new("UICorner")
+            descCorner.CornerRadius = UDim.new(0, 10)
+            descCorner.Parent = descText
+            
+            local descStroke = Instance.new("UIStroke")
+            descStroke.Color = Color3.fromRGB(138, 43, 226)
+            descStroke.Thickness = 1
+            descStroke.Transparency = 0.5
+            descStroke.Parent = descText
             
             -- FLECHAS
             local leftArrow = Instance.new("TextButton")
