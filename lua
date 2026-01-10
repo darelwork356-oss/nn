@@ -203,72 +203,48 @@ local function createPowerActivationEffect(powerName, color)
             end)
         end
         
-        -- ICONO MOCHILA
-        local function createBackpackIcon(screenGui)
-            local backpackButton = Instance.new("ImageButton")
-            backpackButton.Name = "BackpackButton"
-            backpackButton.Size = UDim2.new(0, 36, 0, 36)
-            backpackButton.Position = UDim2.new(0, 145, 1, -46)
-            backpackButton.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
-            backpackButton.BackgroundTransparency = 0.1
-            backpackButton.BorderSizePixel = 0
-            backpackButton.ZIndex = 10000
-            backpackButton.Parent = screenGui
+        -- ICONO TIENDA
+        local function createShopIcon(screenGui)
+            local shopButton = Instance.new("ImageButton")
+            shopButton.Name = "ShopButton"
+            shopButton.Size = UDim2.new(0, 36, 0, 36)
+            shopButton.Position = UDim2.new(0, 145, 0, 4)
+            shopButton.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+            shopButton.BackgroundTransparency = 0.1
+            shopButton.BorderSizePixel = 0
+            shopButton.ZIndex = 10000
+            shopButton.Parent = screenGui
             
             local corner = Instance.new("UICorner")
             corner.CornerRadius = UDim.new(0, 8)
-            corner.Parent = backpackButton
+            corner.Parent = shopButton
             
             local stroke = Instance.new("UIStroke")
             stroke.Color = Color3.fromRGB(100, 100, 100)
             stroke.Thickness = 1
             stroke.Transparency = 0.3
-            stroke.Parent = backpackButton
+            stroke.Parent = shopButton
             
-            local backpackIcon = Instance.new("Frame")
-            backpackIcon.Size = UDim2.new(0, 20, 0, 22)
-            backpackIcon.Position = UDim2.new(0.5, -10, 0.5, -10)
-            backpackIcon.BackgroundColor3 = Color3.fromRGB(200, 200, 200)
-            backpackIcon.BorderSizePixel = 0
-            backpackIcon.ZIndex = 10001
-            backpackIcon.Parent = backpackButton
+            -- ICONO DE TIENDA (CARRITO)
+            local shopIcon = Instance.new("TextLabel")
+            shopIcon.Size = UDim2.new(1, 0, 1, 0)
+            shopIcon.Position = UDim2.new(0, 0, 0, 0)
+            shopIcon.BackgroundTransparency = 1
+            shopIcon.Text = "🛒"
+            shopIcon.TextSize = 20
+            shopIcon.TextColor3 = Color3.fromRGB(200, 200, 200)
+            shopIcon.BorderSizePixel = 0
+            shopIcon.ZIndex = 10001
+            shopIcon.Parent = shopButton
             
-            local iconCorner = Instance.new("UICorner")
-            iconCorner.CornerRadius = UDim.new(0, 4)
-            iconCorner.Parent = backpackIcon
-            
-            for i = 1, 2 do
-                local strap = Instance.new("Frame")
-                strap.Size = UDim2.new(0, 4, 0, 8)
-                strap.Position = UDim2.new(0, i == 1 and 4 or 12, 0, -4)
-                strap.BackgroundColor3 = Color3.fromRGB(80, 80, 90)
-                strap.BorderSizePixel = 0
-                strap.ZIndex = 10002
-                strap.Parent = backpackIcon
-                local strapCorner = Instance.new("UICorner")
-                strapCorner.CornerRadius = UDim.new(0, 2)
-                strapCorner.Parent = strap
-            end
-            
-            local pocket = Instance.new("Frame")
-            pocket.Size = UDim2.new(0, 14, 0, 7)
-            pocket.Position = UDim2.new(0.5, -7, 0, 4)
-            pocket.BackgroundColor3 = Color3.fromRGB(200, 200, 210)
-            pocket.BorderSizePixel = 0
-            pocket.ZIndex = 10002
-            pocket.Parent = backpackIcon
-            local pocketCorner = Instance.new("UICorner")
-            pocketCorner.CornerRadius = UDim.new(0, 2)
-            pocketCorner.Parent = pocket
-            
-            backpackButton.MouseEnter:Connect(function()
-                TweenService:Create(backpackButton, TweenInfo.new(0.2), {Size = UDim2.new(0, 40, 0, 40), BackgroundColor3 = Color3.fromRGB(45, 45, 45)}):Play()
+            shopButton.MouseEnter:Connect(function()
+                TweenService:Create(shopButton, TweenInfo.new(0.2), {Size = UDim2.new(0, 40, 0, 40), BackgroundColor3 = Color3.fromRGB(45, 45, 45)}):Play()
             end)
-            backpackButton.MouseLeave:Connect(function()
-                TweenService:Create(backpackButton, TweenInfo.new(0.2), {Size = UDim2.new(0, 36, 0, 36), BackgroundColor3 = Color3.fromRGB(25, 25, 25)}):Play()
+            shopButton.MouseLeave:Connect(function()
+                TweenService:Create(shopButton, TweenInfo.new(0.2), {Size = UDim2.new(0, 36, 0, 36), BackgroundColor3 = Color3.fromRGB(25, 25, 25)}):Play()
             end)
             
-            return backpackButton
+            return shopButton
         end
         
         -- TIENDA COMPACTA CON ESTILOS Y TIMER
@@ -1006,7 +982,7 @@ local function createPowerActivationEffect(powerName, color)
             -- Iniciar rotación
             rotateShopInventory()
             
-            local backpackButton = createBackpackIcon(screenGui)
+            local shopButton = createShopIcon(screenGui)
             local shopModal, timerLabel = createCompactShop(screenGui)
             local powerBar = createCompactPowerBar(screenGui)
             
@@ -1019,8 +995,8 @@ local function createPowerActivationEffect(powerName, color)
                 end)
             end
             
-            -- Botón mochila
-            backpackButton.MouseButton1Click:Connect(function()
+            -- Botón tienda
+            shopButton.MouseButton1Click:Connect(function()
                 shopOpen = not shopOpen
                 
                 if shopOpen then
