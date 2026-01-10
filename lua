@@ -208,8 +208,8 @@ local function createPowerActivationEffect(powerName, color)
             local backpackButton = Instance.new("ImageButton")
             backpackButton.Name = "BackpackButton"
             backpackButton.Size = UDim2.new(0, 36, 0, 36)
-            backpackButton.Position = UDim2.new(0, 145, 0, 4)
-            backpackButton.BackgroundColor3 = Color3.fromRGB(240, 240, 245)
+            backpackButton.Position = UDim2.new(0, 145, 1, -46)
+            backpackButton.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
             backpackButton.BackgroundTransparency = 0.1
             backpackButton.BorderSizePixel = 0
             backpackButton.ZIndex = 10000
@@ -220,15 +220,15 @@ local function createPowerActivationEffect(powerName, color)
             corner.Parent = backpackButton
             
             local stroke = Instance.new("UIStroke")
-            stroke.Color = Color3.fromRGB(255, 255, 255)
-            stroke.Thickness = 2
-            stroke.Transparency = 0.2
+            stroke.Color = Color3.fromRGB(100, 100, 100)
+            stroke.Thickness = 1
+            stroke.Transparency = 0.3
             stroke.Parent = backpackButton
             
             local backpackIcon = Instance.new("Frame")
             backpackIcon.Size = UDim2.new(0, 20, 0, 22)
             backpackIcon.Position = UDim2.new(0.5, -10, 0.5, -10)
-            backpackIcon.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+            backpackIcon.BackgroundColor3 = Color3.fromRGB(200, 200, 200)
             backpackIcon.BorderSizePixel = 0
             backpackIcon.ZIndex = 10001
             backpackIcon.Parent = backpackButton
@@ -262,10 +262,10 @@ local function createPowerActivationEffect(powerName, color)
             pocketCorner.Parent = pocket
             
             backpackButton.MouseEnter:Connect(function()
-                TweenService:Create(backpackButton, TweenInfo.new(0.2), {Size = UDim2.new(0, 40, 0, 40), BackgroundColor3 = Color3.fromRGB(255, 255, 255)}):Play()
+                TweenService:Create(backpackButton, TweenInfo.new(0.2), {Size = UDim2.new(0, 40, 0, 40), BackgroundColor3 = Color3.fromRGB(45, 45, 45)}):Play()
             end)
             backpackButton.MouseLeave:Connect(function()
-                TweenService:Create(backpackButton, TweenInfo.new(0.2), {Size = UDim2.new(0, 36, 0, 36), BackgroundColor3 = Color3.fromRGB(240, 240, 245)}):Play()
+                TweenService:Create(backpackButton, TweenInfo.new(0.2), {Size = UDim2.new(0, 36, 0, 36), BackgroundColor3 = Color3.fromRGB(25, 25, 25)}):Play()
             end)
             
             return backpackButton
