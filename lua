@@ -282,152 +282,227 @@ local function createPowerActivationEffect(powerName, color)
             return shopButton
         end
         
-        -- TIENDA COMPACTA CON ESTILOS Y TIMER
+        -- TIENDA MODERNA STRANGER THINGS
         local function createCompactShop(screenGui)
             local shopModal = Instance.new("Frame")
             shopModal.Name = "ShopModal"
-            shopModal.Size = UDim2.new(0, 620, 0, 340)
-            shopModal.Position = UDim2.new(0.5, -310, 0.5, -170)
-            shopModal.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
+            shopModal.Size = UDim2.new(0, 700, 0, 450)
+            shopModal.Position = UDim2.new(0.5, -350, 0.5, -225)
+            shopModal.BackgroundColor3 = Color3.fromRGB(10, 10, 15)
             shopModal.BorderSizePixel = 0
             shopModal.Visible = false
             shopModal.ZIndex = 5000
             shopModal.Parent = screenGui
             
             local modalCorner = Instance.new("UICorner")
-            modalCorner.CornerRadius = UDim.new(0, 16)
+            modalCorner.CornerRadius = UDim.new(0, 20)
             modalCorner.Parent = shopModal
             
-            -- BORDE CON GRADIENTE ANIMADO
+            -- BORDE NEÓN ANIMADO STRANGER THINGS
             local modalStroke = Instance.new("UIStroke")
-            modalStroke.Color = Color3.fromRGB(138, 43, 226)
-            modalStroke.Thickness = 4
+            modalStroke.Color = Color3.fromRGB(255, 0, 100)
+            modalStroke.Thickness = 3
             modalStroke.Transparency = 0
             modalStroke.Parent = shopModal
             
-            -- Animación del borde
+            -- EFECTO GLOW EXTERIOR
+            local glowFrame = Instance.new("Frame")
+            glowFrame.Size = UDim2.new(1, 20, 1, 20)
+            glowFrame.Position = UDim2.new(0, -10, 0, -10)
+            glowFrame.BackgroundColor3 = Color3.fromRGB(255, 0, 100)
+            glowFrame.BackgroundTransparency = 0.8
+            glowFrame.BorderSizePixel = 0
+            glowFrame.ZIndex = 4999
+            glowFrame.Parent = shopModal
+            
+            local glowCorner = Instance.new("UICorner")
+            glowCorner.CornerRadius = UDim.new(0, 25)
+            glowCorner.Parent = glowFrame
+            
+            -- Animación del borde neón
             task.spawn(function()
-                while true do
-                    TweenService:Create(modalStroke, TweenInfo.new(2, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), {
-                    Color = Color3.fromRGB(255, 20, 147)
+                while shopModal.Parent do
+                    -- Ciclo rojo-azul-púrpura como Stranger Things
+                    TweenService:Create(modalStroke, TweenInfo.new(1.5, Enum.EasingStyle.Sine), {
+                        Color = Color3.fromRGB(0, 150, 255)
                     }):Play()
-                    task.wait(2)
-                    TweenService:Create(modalStroke, TweenInfo.new(2, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), {
-                    Color = Color3.fromRGB(138, 43, 226)
+                    TweenService:Create(glowFrame, TweenInfo.new(1.5, Enum.EasingStyle.Sine), {
+                        BackgroundColor3 = Color3.fromRGB(0, 150, 255)
                     }):Play()
-                    task.wait(2)
+                    task.wait(1.5)
+                    
+                    TweenService:Create(modalStroke, TweenInfo.new(1.5, Enum.EasingStyle.Sine), {
+                        Color = Color3.fromRGB(138, 43, 226)
+                    }):Play()
+                    TweenService:Create(glowFrame, TweenInfo.new(1.5, Enum.EasingStyle.Sine), {
+                        BackgroundColor3 = Color3.fromRGB(138, 43, 226)
+                    }):Play()
+                    task.wait(1.5)
+                    
+                    TweenService:Create(modalStroke, TweenInfo.new(1.5, Enum.EasingStyle.Sine), {
+                        Color = Color3.fromRGB(255, 0, 100)
+                    }):Play()
+                    TweenService:Create(glowFrame, TweenInfo.new(1.5, Enum.EasingStyle.Sine), {
+                        BackgroundColor3 = Color3.fromRGB(255, 0, 100)
+                    }):Play()
+                    task.wait(1.5)
                 end
             end)
             
-            -- HEADER
+            -- HEADER MODERNO
             local header = Instance.new("Frame")
-            header.Size = UDim2.new(1, 0, 0, 55)
-            header.BackgroundColor3 = Color3.fromRGB(35, 35, 50)
+            header.Size = UDim2.new(1, 0, 0, 80)
+            header.BackgroundColor3 = Color3.fromRGB(15, 15, 25)
             header.BorderSizePixel = 0
             header.ZIndex = 5001
             header.Parent = shopModal
             
             local headerCorner = Instance.new("UICorner")
-            headerCorner.CornerRadius = UDim.new(0, 16)
+            headerCorner.CornerRadius = UDim.new(0, 20)
             headerCorner.Parent = header
             
+            -- GRADIENTE HEADER
             local headerGradient = Instance.new("UIGradient")
             headerGradient.Color = ColorSequence.new{
-            ColorSequenceKeypoint.new(0, Color3.fromRGB(50, 35, 70)),
-            ColorSequenceKeypoint.new(1, Color3.fromRGB(35, 35, 50))
+                ColorSequenceKeypoint.new(0, Color3.fromRGB(25, 15, 35)),
+                ColorSequenceKeypoint.new(0.5, Color3.fromRGB(15, 15, 25)),
+                ColorSequenceKeypoint.new(1, Color3.fromRGB(35, 15, 25))
             }
-            headerGradient.Rotation = 90
+            headerGradient.Rotation = 45
             headerGradient.Parent = header
             
-            -- TIMER DE ROTACIÓN
-            local timerLabel = Instance.new("TextLabel")
-            timerLabel.Name = "RotationTimer"
-            timerLabel.Size = UDim2.new(0, 180, 0, 30)
-            timerLabel.Position = UDim2.new(0, 20, 0, 12)
-            timerLabel.BackgroundColor3 = Color3.fromRGB(255, 100, 100)
-            timerLabel.Text = "🔄 Renueva en: 2:00"
-            timerLabel.Font = Enum.Font.GothamBold
-            timerLabel.TextSize = 14
-            timerLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-            timerLabel.ZIndex = 5002
-            timerLabel.Parent = header
+            -- LOGO STRANGER THINGS
+            local logo = Instance.new("TextLabel")
+            logo.Size = UDim2.new(0, 400, 0, 50)
+            logo.Position = UDim2.new(0, 30, 0, 15)
+            logo.BackgroundTransparency = 1
+            logo.Text = "STRANGER POWERS SHOP"
+            logo.Font = Enum.Font.GothamBold
+            logo.TextSize = 28
+            logo.TextColor3 = Color3.fromRGB(255, 255, 255)
+            logo.TextStrokeTransparency = 0
+            logo.TextStrokeColor3 = Color3.fromRGB(255, 0, 100)
+            logo.TextXAlignment = Enum.TextXAlignment.Left
+            logo.ZIndex = 5002
+            logo.Parent = header
+            
+            -- EFECTO PARPADEO EN EL LOGO
+            task.spawn(function()
+                while logo.Parent do
+                    task.wait(math.random(3, 8))
+                    for i = 1, 3 do
+                        logo.TextTransparency = 0.7
+                        task.wait(0.1)
+                        logo.TextTransparency = 0
+                        task.wait(0.1)
+                    end
+                end
+            end)
+            
+            -- TIMER MEJORADO
+            local timerContainer = Instance.new("Frame")
+            timerContainer.Size = UDim2.new(0, 200, 0, 35)
+            timerContainer.Position = UDim2.new(0, 30, 0, 40)
+            timerContainer.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
+            timerContainer.BorderSizePixel = 0
+            timerContainer.ZIndex = 5002
+            timerContainer.Parent = header
             
             local timerCorner = Instance.new("UICorner")
-            timerCorner.CornerRadius = UDim.new(0, 8)
-            timerCorner.Parent = timerLabel
+            timerCorner.CornerRadius = UDim.new(0, 10)
+            timerCorner.Parent = timerContainer
             
-            -- Título
-            local title = Instance.new("TextLabel")
-            title.Size = UDim2.new(0, 250, 1, 0)
-            title.Position = UDim2.new(0, 210, 0, 0)
-            title.BackgroundTransparency = 1
-            title.Text = "⚡ STRANGER POWERS"
-            title.Font = Enum.Font.GothamBold
-            title.TextSize = 20
-            title.TextColor3 = Color3.fromRGB(255, 255, 255)
-            title.TextStrokeTransparency = 0.3
-            title.TextXAlignment = Enum.TextXAlignment.Left
-            title.ZIndex = 5002
-            title.Parent = header
+            local timerGlow = Instance.new("UIStroke")
+            timerGlow.Color = Color3.fromRGB(255, 100, 100)
+            timerGlow.Thickness = 2
+            timerGlow.Transparency = 0.3
+            timerGlow.Parent = timerContainer
             
-            -- BOTÓN X (CERRAR) - VISIBLE Y GRANDE
+            local timerLabel = Instance.new("TextLabel")
+            timerLabel.Name = "RotationTimer"
+            timerLabel.Size = UDim2.new(1, 0, 1, 0)
+            timerLabel.BackgroundTransparency = 1
+            timerLabel.Text = "⚡ RENUEVA EN: 2:00"
+            timerLabel.Font = Enum.Font.GothamBold
+            timerLabel.TextSize = 16
+            timerLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+            timerLabel.TextStrokeTransparency = 0.5
+            timerLabel.ZIndex = 5003
+            timerLabel.Parent = timerContainer
+            
+            -- BOTÓN X MODERNO
             local closeButton = Instance.new("TextButton")
             closeButton.Name = "CloseButton"
-            closeButton.Size = UDim2.new(0, 45, 0, 45)
-            closeButton.Position = UDim2.new(1, -55, 0.5, -22.5)
-            closeButton.BackgroundColor3 = Color3.fromRGB(220, 50, 50)
+            closeButton.Size = UDim2.new(0, 50, 0, 50)
+            closeButton.Position = UDim2.new(1, -65, 0.5, -25)
+            closeButton.BackgroundColor3 = Color3.fromRGB(200, 30, 30)
             closeButton.Text = "✕"
             closeButton.Font = Enum.Font.GothamBold
-            closeButton.TextSize = 28
+            closeButton.TextSize = 30
             closeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
             closeButton.BorderSizePixel = 0
             closeButton.ZIndex = 5003
             closeButton.Parent = header
             
             local closeCorner = Instance.new("UICorner")
-            closeCorner.CornerRadius = UDim.new(0, 10)
+            closeCorner.CornerRadius = UDim.new(1, 0)
             closeCorner.Parent = closeButton
             
-            local closeStroke = Instance.new("UIStroke")
-            closeStroke.Color = Color3.fromRGB(255, 255, 255)
-            closeStroke.Thickness = 2
-            closeStroke.Transparency = 0.7
-            closeStroke.Parent = closeButton
+            local closeGlow = Instance.new("UIStroke")
+            closeGlow.Color = Color3.fromRGB(255, 100, 100)
+            closeGlow.Thickness = 3
+            closeGlow.Transparency = 0.5
+            closeGlow.Parent = closeButton
             
-            -- Efecto hover en X
+            -- Efecto hover mejorado
             closeButton.MouseEnter:Connect(function()
                 TweenService:Create(closeButton, TweenInfo.new(0.2), {
-                Size = UDim2.new(0, 50, 0, 50),
-                BackgroundColor3 = Color3.fromRGB(255, 70, 70)
+                    Size = UDim2.new(0, 55, 0, 55),
+                    BackgroundColor3 = Color3.fromRGB(255, 50, 50)
                 }):Play()
-                TweenService:Create(closeStroke, TweenInfo.new(0.2), {Transparency = 0.3}):Play()
+                TweenService:Create(closeGlow, TweenInfo.new(0.2), {Transparency = 0.2}):Play()
             end)
             closeButton.MouseLeave:Connect(function()
                 TweenService:Create(closeButton, TweenInfo.new(0.2), {
-                Size = UDim2.new(0, 45, 0, 45),
-                BackgroundColor3 = Color3.fromRGB(220, 50, 50)
+                    Size = UDim2.new(0, 50, 0, 50),
+                    BackgroundColor3 = Color3.fromRGB(200, 30, 30)
                 }):Play()
-                TweenService:Create(closeStroke, TweenInfo.new(0.2), {Transparency = 0.7}):Play()
+                TweenService:Create(closeGlow, TweenInfo.new(0.2), {Transparency = 0.5}):Play()
             end)
             
-            -- CONTENEDOR DEL PRODUCTO
+            -- CONTENEDOR DEL PRODUCTO MODERNO
             local productBox = Instance.new("Frame")
             productBox.Name = "ProductBox"
-            productBox.Size = UDim2.new(1, -30, 0, 190)
-            productBox.Position = UDim2.new(0, 15, 0, 70)
-            productBox.BackgroundColor3 = Color3.fromRGB(40, 40, 55)
+            productBox.Size = UDim2.new(1, -40, 0, 250)
+            productBox.Position = UDim2.new(0, 20, 0, 100)
+            productBox.BackgroundColor3 = Color3.fromRGB(20, 20, 30)
             productBox.BorderSizePixel = 0
             productBox.ZIndex = 5002
             productBox.Parent = shopModal
             
             local boxCorner = Instance.new("UICorner")
-            boxCorner.CornerRadius = UDim.new(0, 12)
+            boxCorner.CornerRadius = UDim.new(0, 15)
             boxCorner.Parent = productBox
             
             local boxStroke = Instance.new("UIStroke")
-            boxStroke.Color = Color3.fromRGB(80, 80, 100)
+            boxStroke.Color = Color3.fromRGB(100, 100, 150)
             boxStroke.Thickness = 2
+            boxStroke.Transparency = 0.3
             boxStroke.Parent = productBox
+            
+            -- EFECTO GLOW INTERNO
+            local innerGlow = Instance.new("Frame")
+            innerGlow.Size = UDim2.new(1, -4, 1, -4)
+            innerGlow.Position = UDim2.new(0, 2, 0, 2)
+            innerGlow.BackgroundColor3 = Color3.fromRGB(138, 43, 226)
+            innerGlow.BackgroundTransparency = 0.9
+            innerGlow.BorderSizePixel = 0
+            innerGlow.ZIndex = 5003
+            innerGlow.Parent = productBox
+            
+            local innerCorner = Instance.new("UICorner")
+            innerCorner.CornerRadius = UDim.new(0, 13)
+            innerCorner.Parent = innerGlow
             
             -- ICONO
             local iconContainer = Instance.new("Frame")
