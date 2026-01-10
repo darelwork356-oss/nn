@@ -208,7 +208,7 @@ local function createPowerActivationEffect(powerName, color)
             local shopButton = Instance.new("ImageButton")
             shopButton.Name = "ShopButton"
             shopButton.Size = UDim2.new(0, 36, 0, 36)
-            shopButton.Position = UDim2.new(0, 145, 0, 4)
+            shopButton.Position = UDim2.new(0, 145, 0, 44)
             shopButton.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
             shopButton.BackgroundTransparency = 0.1
             shopButton.BorderSizePixel = 0
@@ -216,7 +216,7 @@ local function createPowerActivationEffect(powerName, color)
             shopButton.Parent = screenGui
             
             local corner = Instance.new("UICorner")
-            corner.CornerRadius = UDim.new(0, 8)
+            corner.CornerRadius = UDim.new(0.5, 0)
             corner.Parent = shopButton
             
             local stroke = Instance.new("UIStroke")
@@ -225,17 +225,52 @@ local function createPowerActivationEffect(powerName, color)
             stroke.Transparency = 0.3
             stroke.Parent = shopButton
             
-            -- ICONO DE TIENDA (CARRITO)
-            local shopIcon = Instance.new("TextLabel")
-            shopIcon.Size = UDim2.new(1, 0, 1, 0)
-            shopIcon.Position = UDim2.new(0, 0, 0, 0)
-            shopIcon.BackgroundTransparency = 1
-            shopIcon.Text = "🛒"
-            shopIcon.TextSize = 20
-            shopIcon.TextColor3 = Color3.fromRGB(200, 200, 200)
-            shopIcon.BorderSizePixel = 0
-            shopIcon.ZIndex = 10001
-            shopIcon.Parent = shopButton
+            -- ICONO DE TIENDA (DISEÑO VECTORIAL)
+            local iconContainer = Instance.new("Frame")
+            iconContainer.Size = UDim2.new(0, 20, 0, 20)
+            iconContainer.Position = UDim2.new(0.5, -10, 0.5, -10)
+            iconContainer.BackgroundTransparency = 1
+            iconContainer.ZIndex = 10001
+            iconContainer.Parent = shopButton
+            
+            -- Base de la tienda
+            local shopBase = Instance.new("Frame")
+            shopBase.Size = UDim2.new(0, 16, 0, 12)
+            shopBase.Position = UDim2.new(0, 2, 0, 8)
+            shopBase.BackgroundColor3 = Color3.fromRGB(200, 200, 200)
+            shopBase.BorderSizePixel = 0
+            shopBase.ZIndex = 10002
+            shopBase.Parent = iconContainer
+            
+            local baseCorner = Instance.new("UICorner")
+            baseCorner.CornerRadius = UDim.new(0, 2)
+            baseCorner.Parent = shopBase
+            
+            -- Techo de la tienda
+            local shopRoof = Instance.new("Frame")
+            shopRoof.Size = UDim2.new(0, 18, 0, 6)
+            shopRoof.Position = UDim2.new(0, 1, 0, 2)
+            shopRoof.BackgroundColor3 = Color3.fromRGB(180, 180, 180)
+            shopRoof.BorderSizePixel = 0
+            shopRoof.ZIndex = 10003
+            shopRoof.Parent = iconContainer
+            
+            local roofCorner = Instance.new("UICorner")
+            roofCorner.CornerRadius = UDim.new(0, 3)
+            roofCorner.Parent = shopRoof
+            
+            -- Puerta
+            local door = Instance.new("Frame")
+            door.Size = UDim2.new(0, 4, 0, 6)
+            door.Position = UDim2.new(0, 8, 0, 14)
+            door.BackgroundColor3 = Color3.fromRGB(120, 120, 120)
+            door.BorderSizePixel = 0
+            door.ZIndex = 10004
+            door.Parent = iconContainer
+            
+            local doorCorner = Instance.new("UICorner")
+            doorCorner.CornerRadius = UDim.new(0, 1)
+            doorCorner.Parent = door
             
             shopButton.MouseEnter:Connect(function()
                 TweenService:Create(shopButton, TweenInfo.new(0.2), {Size = UDim2.new(0, 40, 0, 40), BackgroundColor3 = Color3.fromRGB(45, 45, 45)}):Play()
