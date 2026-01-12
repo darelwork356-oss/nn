@@ -1,4 +1,4 @@
--- HAWKINS LABORATORY - COMPLETE BUILD
+-- HAWKINS LABORATORY - REALISTIC DESIGN
 -- Colocar en ServerScriptService
 
 local function createHawkinsLab()
@@ -6,187 +6,227 @@ local function createHawkinsLab()
     labModel.Name = "HawkinsLaboratory"
     labModel.Parent = workspace
     
-    -- CONFIGURACIÓN
-    local BASE_POS = Vector3.new(0, 0, 0)
+    local BASE = Vector3.new(0, 0, 0)
     
-    -- FUNCIÓN PARA CREAR PARTES CON STUDS
-    local function createPart(name, size, position, color, parent)
-        local part = Instance.new("Part")
-        part.Name = name
-        part.Size = size
-        part.Position = position
-        part.BrickColor = BrickColor.new(color)
-        part.Material = Enum.Material.Plastic
-        part.TopSurface = Enum.SurfaceType.Studs
-        part.BottomSurface = Enum.SurfaceType.Studs
-        part.LeftSurface = Enum.SurfaceType.Studs
-        part.RightSurface = Enum.SurfaceType.Studs
-        part.FrontSurface = Enum.SurfaceType.Studs
-        part.BackSurface = Enum.SurfaceType.Studs
-        part.Anchored = true
-        part.Parent = parent
-        return part
+    -- FUNCIÓN HELPER
+    local function part(name, size, pos, color, material)
+        local p = Instance.new("Part")
+        p.Name = name
+        p.Size = size
+        p.Position = pos
+        p.BrickColor = BrickColor.new(color)
+        p.Material = material or Enum.Material.Plastic
+        p.TopSurface = Enum.SurfaceType.Studs
+        p.BottomSurface = Enum.SurfaceType.Studs
+        p.LeftSurface = Enum.SurfaceType.Studs
+        p.RightSurface = Enum.SurfaceType.Studs
+        p.FrontSurface = Enum.SurfaceType.Studs
+        p.BackSurface = Enum.SurfaceType.Studs
+        p.Anchored = true
+        p.Parent = labModel
+        return p
     end
     
-    -- PISO DEL LABORATORIO (80x80)
-    local floor = createPart("Floor", Vector3.new(80, 2, 80), BASE_POS + Vector3.new(0, 1, 0), "Dark stone grey", labModel)
+    -- EDIFICIO PRINCIPAL (120x40x100 studs)
+    -- Piso base
+    local mainFloor = part("MainFloor", Vector3.new(120, 4, 100), BASE + Vector3.new(0, 2, 0), "Dark stone grey")
     
-    -- PAREDES EXTERIORES
-    -- Pared frontal con entrada
-    local frontWallLeft = createPart("FrontWallLeft", Vector3.new(25, 20, 4), BASE_POS + Vector3.new(-27.5, 11, -38), "Institutional white", labModel)
-    local frontWallRight = createPart("FrontWallRight", Vector3.new(25, 20, 4), BASE_POS + Vector3.new(27.5, 11, -38), "Institutional white", labModel)
-    local frontWallTop = createPart("FrontWallTop", Vector3.new(20, 8, 4), BASE_POS + Vector3.new(0, 17, -38), "Institutional white", labModel)
+    -- Paredes exteriores - Concreto gris
+    local frontWall = part("FrontWall", Vector3.new(120, 40, 6), BASE + Vector3.new(0, 22, -47), "Medium stone grey")
+    local backWall = part("BackWall", Vector3.new(120, 40, 6), BASE + Vector3.new(0, 22, 47), "Medium stone grey")
+    local leftWall = part("LeftWall", Vector3.new(6, 40, 100), BASE + Vector3.new(-57, 22, 0), "Medium stone grey")
+    local rightWall = part("RightWall", Vector3.new(6, 40, 100), BASE + Vector3.new(57, 22, 0), "Medium stone grey")
     
-    -- Puerta de entrada
-    local door = createPart("Door", Vector3.new(18, 10, 2), BASE_POS + Vector3.new(0, 7, -39), "Really black", labModel)
+    -- Techo
+    local roof = part("Roof", Vector3.new(120, 4, 100), BASE + Vector3.new(0, 42, 0), "Dark stone grey")
     
-    -- Letrero HAWKINS LAB
-    local sign = createPart("LabSign", Vector3.new(30, 4, 1), BASE_POS + Vector3.new(0, 18, -40), "Really red", labModel)
-    sign.Material = Enum.Material.Neon
+    -- ENTRADA PRINCIPAL CON SEGURIDAD
+    local entranceDoor = part("EntranceDoor", Vector3.new(12, 20, 2), BASE + Vector3.new(0, 12, -48), "Really black", Enum.Material.Metal)
     
-    -- Paredes laterales
-    local leftWall = createPart("LeftWall", Vector3.new(4, 20, 80), BASE_POS + Vector3.new(-38, 11, 0), "Institutional white", labModel)
-    local rightWall = createPart("RightWall", Vector3.new(4, 20, 80), BASE_POS + Vector3.new(38, 11, 0), "Institutional white", labModel)
+    -- Ventanas de seguridad en entrada
+    for i = -1, 1 do
+        local window = part("SecurityWindow", Vector3.new(6, 8, 1), BASE + Vector3.new(i * 20, 25, -48), "Light blue", Enum.Material.Glass)
+        window.Transparency = 0.3
+    end
     
-    -- Pared trasera
-    local backWall = createPart("BackWall", Vector3.new(80, 20, 4), BASE_POS + Vector3.new(0, 11, 38), "Institutional white", labModel)
+    -- Letrero del laboratorio
+    local sign = part("HawkinsLabSign", Vector3.new(40, 6, 2), BASE + Vector3.new(0, 35, -49), "Institutional white")
+    local signText = part("SignText", Vector3.new(38, 4, 1), BASE + Vector3.new(0, 35, -49.5), "Really black", Enum.Material.Neon)
     
-    -- TECHO
-    local roof = createPart("Roof", Vector3.new(80, 2, 80), BASE_POS + Vector3.new(0, 21, 0), "Dark stone grey", labModel)
+    -- PASILLO PRINCIPAL (Centro)
+    local hallwayFloor = part("HallwayFloor", Vector3.new(12, 1, 90), BASE + Vector3.new(0, 4.5, 0), "Institutional white")
     
-    -- SALA DE TANQUE SENSORIAL (CENTRO)
-    local tankRoomFloor = createPart("TankRoomFloor", Vector3.new(20, 1, 20), BASE_POS + Vector3.new(0, 2.5, 0), "Black", labModel)
+    -- Luces del pasillo
+    for z = -40, 40, 10 do
+        local light = part("HallLight", Vector3.new(4, 1, 4), BASE + Vector3.new(0, 40, z), "Bright yellow", Enum.Material.Neon)
+        spawn(function()
+            while light.Parent do
+                wait(math.random(5, 15))
+                light.Transparency = math.random(0, 20)/100
+                wait(0.05)
+            end
+        end)
+    end
     
-    -- Paredes de la sala del tanque
-    local tankWall1 = createPart("TankWall1", Vector3.new(20, 8, 2), BASE_POS + Vector3.new(0, 6, -9), "Really black", labModel)
-    local tankWall2 = createPart("TankWall2", Vector3.new(20, 8, 2), BASE_POS + Vector3.new(0, 6, 9), "Really black", labModel)
-    local tankWall3 = createPart("TankWall3", Vector3.new(2, 8, 20), BASE_POS + Vector3.new(-9, 6, 0), "Really black", labModel)
-    local tankWall4 = createPart("TankWall4", Vector3.new(2, 8, 20), BASE_POS + Vector3.new(9, 6, 0), "Really black", labModel)
+    -- SALA DEL TANQUE SENSORIAL (Centro-Atrás)
+    local tankRoomFloor = part("TankRoomFloor", Vector3.new(30, 1, 30), BASE + Vector3.new(0, 4.5, 20), "Black")
+    
+    -- Paredes de la sala del tanque - Negras
+    part("TankWall1", Vector3.new(30, 15, 2), BASE + Vector3.new(0, 12, 5), "Black")
+    part("TankWall2", Vector3.new(30, 15, 2), BASE + Vector3.new(0, 12, 35), "Black")
+    part("TankWall3", Vector3.new(2, 15, 30), BASE + Vector3.new(-14, 12, 20), "Black")
+    part("TankWall4", Vector3.new(2, 15, 30), BASE + Vector3.new(14, 12, 20), "Black")
+    
+    -- Puerta de la sala del tanque
+    local tankDoor = part("TankDoor", Vector3.new(8, 12, 1), BASE + Vector3.new(0, 10, 5), "Really black", Enum.Material.Metal)
     
     -- TANQUE SENSORIAL
-    local tank = createPart("SensoryTank", Vector3.new(12, 4, 8), BASE_POS + Vector3.new(0, 4, 0), "Dark blue", labModel)
-    tank.Material = Enum.Material.Glass
-    tank.Transparency = 0.3
+    local tankBase = part("TankBase", Vector3.new(16, 2, 10), BASE + Vector3.new(0, 6, 20), "Dark stone grey")
+    local tankWalls = part("TankWalls", Vector3.new(16, 6, 10), BASE + Vector3.new(0, 9, 20), "Black", Enum.Material.Glass)
+    tankWalls.Transparency = 0.2
     
-    -- Agua del tanque
-    local water = createPart("TankWater", Vector3.new(11, 3, 7), BASE_POS + Vector3.new(0, 4, 0), "Teal", labModel)
-    water.Material = Enum.Material.Glass
-    water.Transparency = 0.5
+    -- Agua salada del tanque
+    local tankWater = part("TankWater", Vector3.new(15, 5, 9), BASE + Vector3.new(0, 9, 20), "Teal", Enum.Material.Glass)
+    tankWater.Transparency = 0.4
+    
+    -- Escalera al tanque
+    for i = 1, 4 do
+        part("TankStep" .. i, Vector3.new(6, 1, 2), BASE + Vector3.new(-10, 5 + i, 20 - (i * 2)), "Dark stone grey")
+    end
     
     -- LABORATORIOS LATERALES
-    -- Laboratorio izquierdo
-    local leftLabFloor = createPart("LeftLabFloor", Vector3.new(25, 1, 30), BASE_POS + Vector3.new(-20, 2.5, -20), "Mid gray", labModel)
+    -- Laboratorio Izquierdo
+    local leftLabFloor = part("LeftLabFloor", Vector3.new(40, 1, 80), BASE + Vector3.new(-30, 4.5, 0), "Light stone grey")
     
-    -- Mesas de laboratorio izquierda
-    for i = 1, 3 do
-        local table = createPart("LabTable" .. i, Vector3.new(8, 4, 3), BASE_POS + Vector3.new(-20, 4, -30 + (i * 8)), "Light stone grey", labModel)
-        
-        -- Equipos en las mesas
-        local equipment = createPart("Equipment" .. i, Vector3.new(2, 2, 2), BASE_POS + Vector3.new(-20, 7, -30 + (i * 8)), "Bright green", labModel)
-        equipment.Material = Enum.Material.Neon
+    -- Divisiones de laboratorio
+    for z = -30, 30, 20 do
+        part("LabDivider", Vector3.new(40, 12, 2), BASE + Vector3.new(-30, 10, z), "Institutional white")
     end
     
-    -- Laboratorio derecho
-    local rightLabFloor = createPart("RightLabFloor", Vector3.new(25, 1, 30), BASE_POS + Vector3.new(20, 2.5, -20), "Mid gray", labModel)
-    
-    -- Mesas de laboratorio derecha
-    for i = 1, 3 do
-        local table = createPart("LabTable" .. (i+3), Vector3.new(8, 4, 3), BASE_POS + Vector3.new(20, 4, -30 + (i * 8)), "Light stone grey", labModel)
-        
-        -- Equipos en las mesas
-        local equipment = createPart("Equipment" .. (i+3), Vector3.new(2, 2, 2), BASE_POS + Vector3.new(20, 7, -30 + (i * 8)), "Bright red", labModel)
-        equipment.Material = Enum.Material.Neon
+    -- Mesas de laboratorio con equipos
+    for z = -35, 35, 15 do
+        for x = -45, -20, 12 do
+            local table = part("LabTable", Vector3.new(8, 4, 4), BASE + Vector3.new(x, 6.5, z), "Light stone grey")
+            
+            -- Microscopio
+            local microscope = part("Microscope", Vector3.new(2, 3, 2), BASE + Vector3.new(x - 2, 9, z), "Dark stone grey")
+            
+            -- Computadora
+            local computer = part("Computer", Vector3.new(3, 2, 2), BASE + Vector3.new(x + 2, 9, z), "Black")
+            local screen = part("Screen", Vector3.new(2.5, 1.5, 0.2), BASE + Vector3.new(x + 2, 9.5, z - 1), "Bright blue", Enum.Material.Neon)
+        end
     end
     
-    -- SALA DE CONTROL (ATRÁS)
-    local controlRoomFloor = createPart("ControlRoomFloor", Vector3.new(30, 1, 20), BASE_POS + Vector3.new(0, 2.5, 25), "Really black", labModel)
+    -- Laboratorio Derecho (espejo)
+    local rightLabFloor = part("RightLabFloor", Vector3.new(40, 1, 80), BASE + Vector3.new(30, 4.5, 0), "Light stone grey")
+    
+    for z = -30, 30, 20 do
+        part("LabDivider", Vector3.new(40, 12, 2), BASE + Vector3.new(30, 10, z), "Institutional white")
+    end
+    
+    for z = -35, 35, 15 do
+        for x = 20, 45, 12 do
+            local table = part("LabTable", Vector3.new(8, 4, 4), BASE + Vector3.new(x, 6.5, z), "Light stone grey")
+            local microscope = part("Microscope", Vector3.new(2, 3, 2), BASE + Vector3.new(x - 2, 9, z), "Dark stone grey")
+            local computer = part("Computer", Vector3.new(3, 2, 2), BASE + Vector3.new(x + 2, 9, z), "Black")
+            local screen = part("Screen", Vector3.new(2.5, 1.5, 0.2), BASE + Vector3.new(x + 2, 9.5, z - 1), "Bright green", Enum.Material.Neon)
+        end
+    end
+    
+    -- SALA DE CONTROL (Frente)
+    local controlFloor = part("ControlFloor", Vector3.new(50, 1, 20), BASE + Vector3.new(0, 4.5, -25), "Really black")
+    
+    -- Ventana de observación al tanque
+    local observationWindow = part("ObservationWindow", Vector3.new(20, 10, 2), BASE + Vector3.new(0, 12, -5), "Light blue", Enum.Material.Glass)
+    observationWindow.Transparency = 0.3
     
     -- Consolas de control
-    for i = 1, 4 do
-        local console = createPart("Console" .. i, Vector3.new(6, 5, 3), BASE_POS + Vector3.new(-15 + (i * 10), 4.5, 25), "Dark stone grey", labModel)
+    for x = -20, 20, 10 do
+        local console = part("ControlConsole", Vector3.new(8, 5, 4), BASE + Vector3.new(x, 7, -25), "Dark stone grey")
         
-        -- Pantallas
-        local screen = createPart("Screen" .. i, Vector3.new(5, 3, 0.5), BASE_POS + Vector3.new(-15 + (i * 10), 6, 23.5), "Bright blue", labModel)
-        screen.Material = Enum.Material.Neon
+        -- Pantallas múltiples
+        for i = 1, 3 do
+            local screen = part("ControlScreen", Vector3.new(2, 2, 0.2), BASE + Vector3.new(x - 3 + (i * 2), 9, -27), "Bright blue", Enum.Material.Neon)
+        end
+        
+        -- Botones
+        for i = 1, 4 do
+            local button = part("Button", Vector3.new(0.5, 0.5, 0.5), BASE + Vector3.new(x - 2 + i, 7.5, -23), "Bright red", Enum.Material.Neon)
+            button.Shape = Enum.PartType.Cylinder
+        end
     end
     
-    -- CELDAS DE CONTENCIÓN (DERECHA ATRÁS)
-    for i = 1, 2 do
+    -- CELDAS DE CONTENCIÓN (Derecha-Atrás)
+    for i = 0, 2 do
+        local cellFloor = part("CellFloor" .. i, Vector3.new(10, 1, 10), BASE + Vector3.new(40, 4.5, -30 + (i * 15)), "Dark stone grey")
+        
         -- Paredes de celda
-        local cellFloor = createPart("CellFloor" .. i, Vector3.new(8, 1, 8), BASE_POS + Vector3.new(25, 2.5, 15 + (i * 12)), "Dark stone grey", labModel)
+        part("CellWallBack", Vector3.new(10, 12, 2), BASE + Vector3.new(40, 10, -35 + (i * 15)), "Mid gray")
+        part("CellWallLeft", Vector3.new(2, 12, 10), BASE + Vector3.new(35, 10, -30 + (i * 15)), "Mid gray")
+        part("CellWallRight", Vector3.new(2, 12, 10), BASE + Vector3.new(45, 10, -30 + (i * 15)), "Mid gray")
         
-        local cellWallFront = createPart("CellWallFront" .. i, Vector3.new(8, 8, 1), BASE_POS + Vector3.new(25, 6, 11 + (i * 12)), "Mid gray", labModel)
-        cellWallFront.Material = Enum.Material.Glass
-        cellWallFront.Transparency = 0.5
+        -- Pared frontal de vidrio
+        local cellGlass = part("CellGlass", Vector3.new(10, 12, 1), BASE + Vector3.new(40, 10, -25 + (i * 15)), "Light blue", Enum.Material.Glass)
+        cellGlass.Transparency = 0.5
         
-        local cellWallBack = createPart("CellWallBack" .. i, Vector3.new(8, 8, 1), BASE_POS + Vector3.new(25, 6, 19 + (i * 12)), "Mid gray", labModel)
-        local cellWallLeft = createPart("CellWallLeft" .. i, Vector3.new(1, 8, 8), BASE_POS + Vector3.new(21, 6, 15 + (i * 12)), "Mid gray", labModel)
-        local cellWallRight = createPart("CellWallRight" .. i, Vector3.new(1, 8, 8), BASE_POS + Vector3.new(29, 6, 15 + (i * 12)), "Mid gray", labModel)
+        -- Cama
+        part("CellBed", Vector3.new(6, 1, 3), BASE + Vector3.new(42, 5.5, -32 + (i * 15)), "Institutional white")
         
-        -- Cama en celda
-        local bed = createPart("Bed" .. i, Vector3.new(6, 1, 3), BASE_POS + Vector3.new(25, 3.5, 16 + (i * 12)), "Institutional white", labModel)
+        -- Inodoro
+        part("CellToilet", Vector3.new(2, 2, 2), BASE + Vector3.new(38, 6, -28 + (i * 15)), "Institutional white")
     end
     
-    -- LUCES DEL TECHO
-    for x = -30, 30, 15 do
-        for z = -30, 30, 15 do
-            local light = createPart("Light", Vector3.new(2, 1, 2), BASE_POS + Vector3.new(x, 20, z), "Bright yellow", labModel)
-            light.Material = Enum.Material.Neon
-            
-            -- Efecto de parpadeo
+    -- GENERADOR PRINCIPAL (Izquierda-Atrás)
+    local generator = part("MainGenerator", Vector3.new(12, 20, 12), BASE + Vector3.new(-40, 14, 30), "Really black", Enum.Material.Metal)
+    
+    -- Luces del generador
+    for y = 8, 20, 4 do
+        for i = 1, 4 do
+            local light = part("GenLight", Vector3.new(1, 1, 1), BASE + Vector3.new(-40 + (i-2.5)*3, y, 30), "Bright red", Enum.Material.Neon)
+            light.Shape = Enum.PartType.Ball
             spawn(function()
                 while light.Parent do
-                    wait(math.random(3, 8))
-                    light.Transparency = math.random(0, 30)/100
-                    wait(0.1)
+                    wait(0.3)
+                    light.Transparency = (light.Transparency == 0) and 0.7 or 0
                 end
             end)
         end
     end
     
-    -- GENERADOR DE ENERGÍA (IZQUIERDA ATRÁS)
-    local generator = createPart("Generator", Vector3.new(8, 10, 8), BASE_POS + Vector3.new(-25, 7, 25), "Really black", labModel)
-    
-    -- Luces del generador
-    for i = 1, 4 do
-        local genLight = createPart("GenLight" .. i, Vector3.new(1, 1, 1), BASE_POS + Vector3.new(-25 + (i-2.5)*2, 10, 25), "Bright red", labModel)
-        genLight.Material = Enum.Material.Neon
-        genLight.Shape = Enum.PartType.Ball
-        
-        -- Parpadeo
-        spawn(function()
-            while genLight.Parent do
-                wait(0.5)
-                genLight.Transparency = (genLight.Transparency == 0) and 0.5 or 0
-            end
-        end)
+    -- Cables del generador
+    for i = 1, 6 do
+        local cable = part("PowerCable", Vector3.new(2, 2, 40), BASE + Vector3.new(-40 + (i * 3), 4, 10), "Black")
+        cable.Shape = Enum.PartType.Cylinder
+        cable.Orientation = Vector3.new(0, 90, 0)
     end
     
-    -- TUBOS DE VENTILACIÓN
-    for i = 1, 4 do
-        local pipe = createPart("Pipe" .. i, Vector3.new(2, 20, 2), BASE_POS + Vector3.new(-30 + (i * 20), 11, -30), "Dark stone grey", labModel)
-        pipe.Shape = Enum.PartType.Cylinder
-        pipe.Orientation = Vector3.new(0, 0, 90)
+    -- SISTEMA DE VENTILACIÓN
+    for x = -50, 50, 25 do
+        for z = -40, 40, 20 do
+            local vent = part("AirVent", Vector3.new(3, 3, 3), BASE + Vector3.new(x, 40, z), "Dark stone grey")
+        end
     end
     
-    -- SEÑALES DE ADVERTENCIA
-    local warningSign1 = createPart("WarningSign1", Vector3.new(4, 4, 0.5), BASE_POS + Vector3.new(-35, 10, 0), "Bright yellow", labModel)
-    warningSign1.Material = Enum.Material.Neon
+    -- SEÑALES DE EMERGENCIA
+    local exitSign1 = part("ExitSign", Vector3.new(6, 3, 1), BASE + Vector3.new(-50, 15, 0), "Bright red", Enum.Material.Neon)
+    local exitSign2 = part("ExitSign", Vector3.new(6, 3, 1), BASE + Vector3.new(50, 15, 0), "Bright red", Enum.Material.Neon)
     
-    local warningSign2 = createPart("WarningSign2", Vector3.new(4, 4, 0.5), BASE_POS + Vector3.new(35, 10, 0), "Bright yellow", labModel)
-    warningSign2.Material = Enum.Material.Neon
-    
-    -- ESCALERAS A SEGUNDO PISO (OPCIONAL)
-    for i = 1, 10 do
-        local step = createPart("Step" .. i, Vector3.new(8, 1, 3), BASE_POS + Vector3.new(-30, 2 + (i * 1), -10 - (i * 1)), "Dark stone grey", labModel)
+    -- ESCALERAS DE EMERGENCIA
+    for i = 1, 15 do
+        part("EmergencyStair", Vector3.new(10, 1, 4), BASE + Vector3.new(-50, 4 + (i * 2), -40 + (i * 2)), "Dark stone grey")
     end
     
-    print("Laboratorio de Hawkins creado exitosamente!")
-    print("Dimensiones: 80x20x80 studs")
-    print("Incluye: Tanque sensorial, laboratorios, sala de control, celdas, generador")
+    print("=== HAWKINS LABORATORY ===")
+    print("Dimensiones: 120x40x100 studs")
+    print("- Tanque sensorial con agua")
+    print("- 2 laboratorios completos")
+    print("- Sala de control con consolas")
+    print("- 3 celdas de contención")
+    print("- Generador principal")
+    print("- Sistema de ventilación")
+    print("==========================")
     
     return labModel
 end
 
--- Crear el laboratorio
 createHawkinsLab()
