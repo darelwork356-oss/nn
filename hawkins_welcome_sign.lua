@@ -27,6 +27,8 @@ local function createHawkinsSign()
     base.Position = Vector3.new(0, 2, 0)
     base.Material = Enum.Material.Concrete
     base.BrickColor = BrickColor.new("Dark stone grey")
+    base.Shape = Enum.PartType.Block
+    base.TopSurface = Enum.SurfaceType.Studs
     base.Anchored = true
     base.Parent = signModel
     
@@ -37,6 +39,9 @@ local function createHawkinsSign()
     pole.Position = Vector3.new(0, SIGN_CONFIG.POLE_HEIGHT/2 + 4, 0)
     pole.Material = Enum.Material.Metal
     pole.BrickColor = BrickColor.new("Really black")
+    pole.Shape = Enum.PartType.Block
+    pole.TopSurface = Enum.SurfaceType.Studs
+    pole.BottomSurface = Enum.SurfaceType.Studs
     pole.Anchored = true
     pole.Parent = signModel
     
@@ -47,6 +52,9 @@ local function createHawkinsSign()
     support.Position = Vector3.new(0, SIGN_CONFIG.POLE_HEIGHT - 5, 0)
     support.Material = Enum.Material.Metal
     support.BrickColor = BrickColor.new("Really black")
+    support.Shape = Enum.PartType.Block
+    support.TopSurface = Enum.SurfaceType.Studs
+    support.BottomSurface = Enum.SurfaceType.Studs
     support.Anchored = true
     support.Parent = signModel
     
@@ -57,6 +65,11 @@ local function createHawkinsSign()
     sign.Position = Vector3.new(0, SIGN_CONFIG.POLE_HEIGHT - 15, 0)
     sign.Material = Enum.Material.SmoothPlastic
     sign.BrickColor = BrickColor.new("Dark green")
+    sign.Shape = Enum.PartType.Block
+    sign.TopSurface = Enum.SurfaceType.Studs
+    sign.BottomSurface = Enum.SurfaceType.Studs
+    sign.FrontSurface = Enum.SurfaceType.Smooth
+    sign.BackSurface = Enum.SurfaceType.Smooth
     sign.Anchored = true
     sign.Parent = signModel
     
@@ -67,6 +80,9 @@ local function createHawkinsSign()
     border.Position = Vector3.new(0, sign.Position.Y, sign.Position.Z - 0.5)
     border.Material = Enum.Material.Metal
     border.BrickColor = BrickColor.new("Mid gray")
+    border.Shape = Enum.PartType.Block
+    border.TopSurface = Enum.SurfaceType.Studs
+    border.BottomSurface = Enum.SurfaceType.Studs
     border.Anchored = true
     border.Parent = signModel
     
@@ -118,6 +134,8 @@ local function createHawkinsSign()
         light.Shape = Enum.PartType.Ball
         light.Material = Enum.Material.Neon
         light.BrickColor = BrickColor.new("Bright yellow")
+        light.TopSurface = Enum.SurfaceType.Smooth
+        light.BottomSurface = Enum.SurfaceType.Smooth
         light.Anchored = true
         light.Parent = signModel
         
