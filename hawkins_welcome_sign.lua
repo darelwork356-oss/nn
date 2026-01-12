@@ -83,8 +83,8 @@ local function createHawkinsSign()
     sign.BottomSurface = Enum.SurfaceType.Studs
     sign.LeftSurface = Enum.SurfaceType.Studs
     sign.RightSurface = Enum.SurfaceType.Studs
-    sign.FrontSurface = Enum.SurfaceType.Smooth
-    sign.BackSurface = Enum.SurfaceType.Smooth
+    sign.FrontSurface = Enum.SurfaceType.Studs
+    sign.BackSurface = Enum.SurfaceType.Studs
     sign.Anchored = true
     sign.Parent = signModel
     
@@ -199,40 +199,63 @@ local function createHawkinsSign()
         end
     end
     
-    weldParts()
-    
-    -- SISTEMA DE MOVIMIENTO
-    local function setupMovement()
-        -- Hacer el poste movible pero mantener soldaduras
-        pole.Anchored = false
-        base.Anchored = false
-        support.Anchored = false
-        sign.Anchored = false
-        border.Anchored = false
-        
-        for _, child in pairs(signModel:GetChildren()) do
-            if child.Name:find("Light") then
-                child.Anchored = false
-            end
+    -- SOLDADURA DE TODAS LAS PARTES
+    local function weldParts()
+        local function weldTo(part1, part2)
+            local weld = Instance.new("WeldConstraint")
+            weld.Part0 = part1
+            weld.Part1 = part2
+            weld.Parent = part1
         end
         
-        -- BodyPosition para estabilidad
+        -- Soldar todo al poste principal
+        weldTo(pole, base)
+        weldTo(pole, support)
+        weldTo(pole, sign)
+        weldTo(pole, border)
+        
+        -- Soldar luces
+        for _, child in pairs(signModel:GetChildren()) do
+            if child.Name:find("Light") then
+                weldTo(pole, child)
+            end
+        end
+    end
+    
+    -- SISTEMA DE MOVIMIENTO MEJORADO
+    local function setupMovement()
+        -- Primero soldar todo
+        weldParts()
+        
+        -- Luego hacer solo el poste movible
+        pole.Anchored = false
+        
+        -- BodyPosition para seguir el mouse/movimiento
         local bodyPos = Instance.new("BodyPosition")
-        bodyPos.MaxForce = Vector3.new(4000, 4000, 4000)
+        bodyPos.MaxForce = Vector3.new(50000, 50000, 50000)
         bodyPos.Position = pole.Position
+        bodyPos.D = 2000
+        bodyPos.P = 10000
         bodyPos.Parent = pole
         
         local bodyAngular = Instance.new("BodyAngularVelocity")
-        bodyAngular.MaxTorque = Vector3.new(4000, 4000, 4000)
+        bodyAngular.MaxTorque = Vector3.new(50000, 50000, 50000)
         bodyAngular.AngularVelocity = Vector3.new(0, 0, 0)
         bodyAngular.Parent = pole
         
-        -- Actualizar posición cuando se mueva
-        local lastPosition = pole.Position
-        RunService.Heartbeat:Connect(function()
-            if (pole.Position - lastPosition).Magnitude > 0.1 then
+        -- Detectar cuando se mueve y actualizar posición
+        local connection
+        connection = pole.Touched:Connect(function(hit)
+            if hit.Parent:FindFirstChild("Humanoid") then
                 bodyPos.Position = pole.Position
-                lastPosition = pole.Position
+            end
+        end)
+        
+        -- Actualizar posición constantemente
+        spawn(function()
+            while pole.Parent do
+                bodyPos.Position = pole.Position
+                wait(0.1)
             end
         end)
     end
