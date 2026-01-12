@@ -94,7 +94,7 @@ local function createHawkinsSign()
     border.Size = Vector3.new(SIGN_CONFIG.SIGN_WIDTH + 2, SIGN_CONFIG.SIGN_HEIGHT + 2, SIGN_CONFIG.SIGN_THICKNESS - 0.5)
     border.Position = Vector3.new(0, sign.Position.Y, sign.Position.Z - 1)
     border.Material = Enum.Material.Plastic
-    border.BrickColor = BrickColor.new("Mid gray")
+    border.BrickColor = BrickColor.new("Institutional white")
     border.Shape = Enum.PartType.Block
     border.TopSurface = Enum.SurfaceType.Studs
     border.BottomSurface = Enum.SurfaceType.Studs
@@ -184,6 +184,17 @@ local function createHawkinsSign()
             end
         end
     end
+    
+    -- TEXTO CON DECALS (NO SIGUE AL JUGADOR)
+    local welcomeDecal = Instance.new("Decal")
+    welcomeDecal.Texture = "rbxasset://textures/face.png"
+    welcomeDecal.Face = Enum.NormalId.Front
+    welcomeDecal.Parent = sign
+    
+    local hawkinsDecal = Instance.new("Decal")
+    hawkinsDecal.Texture = "rbxasset://textures/face.png"
+    hawkinsDecal.Face = Enum.NormalId.Back
+    hawkinsDecal.Parent = sign
     
     weldParts()
     
