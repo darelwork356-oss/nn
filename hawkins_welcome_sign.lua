@@ -105,45 +105,11 @@ local function createHawkinsSign()
     border.Anchored = true
     border.Parent = signModel
     
-    -- TEXTO PRINCIPAL
-    local surfaceGui = Instance.new("SurfaceGui")
-    surfaceGui.Face = Enum.NormalId.Front
-    surfaceGui.Parent = sign
+    -- TEXTO PRINCIPAL - SIN SURFACEGUI
+    -- Eliminando completamente el SurfaceGui que causa problemas
     
-    local mainText = Instance.new("TextLabel")
-    mainText.Size = UDim2.new(1, 0, 0.6, 0)
-    mainText.Position = UDim2.new(0, 0, 0.1, 0)
-    mainText.BackgroundTransparency = 1
-    mainText.Text = "WELCOME TO"
-    mainText.TextColor3 = Color3.new(1, 1, 1)
-    mainText.TextScaled = true
-    mainText.Font = Enum.Font.SourceSansBold
-    mainText.TextStrokeTransparency = 0.5
-    mainText.TextStrokeColor3 = Color3.new(0, 0, 0)
-    mainText.Parent = surfaceGui
-    
-    local hawkinsText = Instance.new("TextLabel")
-    hawkinsText.Size = UDim2.new(1, 0, 0.4, 0)
-    hawkinsText.Position = UDim2.new(0, 0, 0.6, 0)
-    hawkinsText.BackgroundTransparency = 1
-    hawkinsText.Text = "HAWKINS"
-    hawkinsText.TextColor3 = Color3.new(0.9, 0.1, 0.1)
-    hawkinsText.TextScaled = true
-    hawkinsText.Font = Enum.Font.SourceSansBold
-    hawkinsText.TextStrokeTransparency = 0.3
-    hawkinsText.TextStrokeColor3 = Color3.new(0, 0, 0)
-    hawkinsText.Parent = surfaceGui
-    
-    -- TEXTO TRASERO
-    local backSurfaceGui = Instance.new("SurfaceGui")
-    backSurfaceGui.Face = Enum.NormalId.Back
-    backSurfaceGui.Parent = sign
-    
-    local backMainText = mainText:Clone()
-    backMainText.Parent = backSurfaceGui
-    
-    local backHawkinsText = hawkinsText:Clone()
-    backHawkinsText.Parent = backSurfaceGui
+    -- TEXTO TRASERO - SIN SURFACEGUI
+    -- Eliminando completamente el SurfaceGui trasero
     
     -- LUCES DECORATIVAS
     for i = 1, 4 do
