@@ -163,117 +163,69 @@ local function createHawkinsSign()
         local yPos = (i == 1 or i == 3) and sign.Position.Y + SIGN_CONFIG.SIGN_HEIGHT/2 - 2 or sign.Position.Y - SIGN_CONFIG.SIGN_HEIGHT/2 + 2
         light.Position = Vector3.new(xPos, yPos, sign.Position.Z + 2)
         
-        -- Efecto de parpadeo
+        -- Efecto de parpadeo SIMPLE
         spawn(function()
             while light.Parent do
-                local flickerTween = TweenService:Create(light,
-                    TweenInfo.new(math.random(1, 3), Enum.EasingStyle.Sine, Enum.EasingDirection.InOut),
-                    {Transparency = math.random(0, 30)/100}
-                )
-                flickerTween:Play()
-                wait(math.random(1, 4))
-            end
-        end)
-    end
-    
-    -- SOLDADURA DE TODAS LAS PARTES
-    local function weldParts()
-        local function weldTo(part1, part2)
-            local weld = Instance.new("WeldConstraint")
-            weld.Part0 = part1
-            weld.Part1 = part2
-            weld.Parent = part1
-        end
-        
-        -- Soldar todo al poste principal
-        weldTo(pole, base)
-        weldTo(pole, support)
-        weldTo(pole, sign)
-        weldTo(pole, border)
-        
-        -- Soldar luces
-        for _, child in pairs(signModel:GetChildren()) do
-            if child.Name:find("Light") then
-                weldTo(pole, child)
-            end
-        end
-    end
-    
-    -- SOLDADURA DE TODAS LAS PARTES
-    local function weldParts()
-        local function weldTo(part1, part2)
-            local weld = Instance.new("WeldConstraint")
-            weld.Part0 = part1
-            weld.Part1 = part2
-            weld.Parent = part1
-        end
-        
-        -- Soldar todo al poste principal
-        weldTo(pole, base)
-        weldTo(pole, support)
-        weldTo(pole, sign)
-        weldTo(pole, border)
-        
-        -- Soldar luces
-        for _, child in pairs(signModel:GetChildren()) do
-            if child.Name:find("Light") then
-                weldTo(pole, child)
-            end
-        end
-    end
-    
-    -- SISTEMA DE MOVIMIENTO MEJORADO
-    local function setupMovement()
-        -- Primero soldar todo
-        weldParts()
-        
-        -- Luego hacer solo el poste movible
-        pole.Anchored = false
-        
-        -- BodyPosition para seguir el mouse/movimiento
-        local bodyPos = Instance.new("BodyPosition")
-        bodyPos.MaxForce = Vector3.new(50000, 50000, 50000)
-        bodyPos.Position = pole.Position
-        bodyPos.D = 2000
-        bodyPos.P = 10000
-        bodyPos.Parent = pole
-        
-        local bodyAngular = Instance.new("BodyAngularVelocity")
-        bodyAngular.MaxTorque = Vector3.new(50000, 50000, 50000)
-        bodyAngular.AngularVelocity = Vector3.new(0, 0, 0)
-        bodyAngular.Parent = pole
-        
-        -- Detectar cuando se mueve y actualizar posición
-        local connection
-        connection = pole.Touched:Connect(function(hit)
-            if hit.Parent:FindFirstChild("Humanoid") then
-                bodyPos.Position = pole.Position
-            end
-        end)
-        
-        -- Actualizar posición constantemente
-        spawn(function()
-            while pole.Parent do
-                bodyPos.Position = pole.Position
+                wait(math.random(2, 5))
+                light.Transparency = math.random(0, 30)/100
                 wait(0.1)
             end
         end)
     end
     
-    setupMovement()
-    
-    -- EFECTOS AMBIENTALES
-    spawn(function()
-        while signModel.Parent do
-            -- Efecto de viento sutil
-            local windTween = TweenService:Create(sign,
-                TweenInfo.new(math.random(3, 6), Enum.EasingStyle.Sine, Enum.EasingDirection.InOut, -1, true),
-                {Rotation = Vector3.new(0, 0, math.random(-2, 2))}
-            )
-            windTween:Play()
-            wait(math.random(5, 10))
+    -- SOLDADURA DE TODAS LAS PARTES
+    local function weldParts()
+        local function weldTo(part1, part2)
+            local weld = Instance.new("WeldConstraint")
+            weld.Part0 = part1
+            weld.Part1 = part2
+            weld.Parent = part1
         end
-    end)
+        
+        -- Soldar todo al poste principal
+        weldTo(pole, base)
+        weldTo(pole, support)
+        weldTo(pole, sign)
+        weldTo(pole, border)
+        
+        -- Soldar luces
+        for _, child in pairs(signModel:GetChildren()) do
+            if child.Name:find("Light") then
+                weldTo(pole, child)
+            end
+        end
+    end
+    
+    -- SOLDADURA DE TODAS LAS PARTES
+    local function weldParts()
+        local function weldTo(part1, part2)
+            local weld = Instance.new("WeldConstraint")
+            weld.Part0 = part1
+            weld.Part1 = part2
+            weld.Parent = part1
+        end
+        
+        -- Soldar todo al poste principal
+        weldTo(pole, base)
+        weldTo(pole, support)
+        weldTo(pole, sign)
+        weldTo(pole, border)
+        
+        -- Soldar luces
+        for _, child in pairs(signModel:GetChildren()) do
+            if child.Name:find("Light") then
+                weldTo(pole, child)
+            end
+        end
+    end
+    
+    weldParts()
+    
+    -- HACER SOLO EL POSTE MOVIBLE
+    pole.Anchored = false
+    
+    -- ELIMINAR TODOS LOS EFECTOS Y UI QUE CAUSAN PROBLEMAS
+    -- No BodyPosition, no BodyAngularVelocity, no efectos
     
     print("Cartel de Hawkins creado exitosamente!")
     return signModel
