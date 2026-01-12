@@ -1,9 +1,6 @@
 -- HAWKINS WELCOME SIGN SCRIPT
 -- Colocar en ServerScriptService
 
-local RunService = game:GetService("RunService")
-local TweenService = game:GetService("TweenService")
-
 -- Configuración del cartel
 local SIGN_CONFIG = {
     POLE_HEIGHT = 100,
@@ -71,28 +68,11 @@ local function createHawkinsSign()
     support.Anchored = true
     support.Parent = signModel
     
-    -- CARTEL PRINCIPAL
-    local sign = Instance.new("Part")
-    sign.Name = "Sign"
-    sign.Size = Vector3.new(SIGN_CONFIG.SIGN_WIDTH, SIGN_CONFIG.SIGN_HEIGHT, SIGN_CONFIG.SIGN_THICKNESS)
-    sign.Position = Vector3.new(0, SIGN_CONFIG.POLE_HEIGHT - 15, 5)
-    sign.Material = Enum.Material.Plastic
-    sign.BrickColor = BrickColor.new("Dark green")
-    sign.Shape = Enum.PartType.Block
-    sign.TopSurface = Enum.SurfaceType.Studs
-    sign.BottomSurface = Enum.SurfaceType.Studs
-    sign.LeftSurface = Enum.SurfaceType.Studs
-    sign.RightSurface = Enum.SurfaceType.Studs
-    sign.FrontSurface = Enum.SurfaceType.Studs
-    sign.BackSurface = Enum.SurfaceType.Studs
-    sign.Anchored = true
-    sign.Parent = signModel
-    
-    -- BORDE DEL CARTEL
+    -- BORDE BLANCO DEL CARTEL
     local border = Instance.new("Part")
     border.Name = "Border"
-    border.Size = Vector3.new(SIGN_CONFIG.SIGN_WIDTH + 2, SIGN_CONFIG.SIGN_HEIGHT + 2, SIGN_CONFIG.SIGN_THICKNESS - 0.5)
-    border.Position = Vector3.new(0, sign.Position.Y, sign.Position.Z - 1)
+    border.Size = Vector3.new(SIGN_CONFIG.SIGN_WIDTH + 2, SIGN_CONFIG.SIGN_HEIGHT + 2, SIGN_CONFIG.SIGN_THICKNESS)
+    border.Position = Vector3.new(0, SIGN_CONFIG.POLE_HEIGHT - 15, 5)
     border.Material = Enum.Material.Plastic
     border.BrickColor = BrickColor.new("Institutional white")
     border.Shape = Enum.PartType.Block
@@ -105,11 +85,42 @@ local function createHawkinsSign()
     border.Anchored = true
     border.Parent = signModel
     
-    -- TEXTO PRINCIPAL - SIN SURFACEGUI
-    -- Eliminando completamente el SurfaceGui que causa problemas
+    -- CARTEL VERDE PRINCIPAL
+    local sign = Instance.new("Part")
+    sign.Name = "Sign"
+    sign.Size = Vector3.new(SIGN_CONFIG.SIGN_WIDTH - 2, SIGN_CONFIG.SIGN_HEIGHT - 2, SIGN_CONFIG.SIGN_THICKNESS + 0.2)
+    sign.Position = Vector3.new(0, SIGN_CONFIG.POLE_HEIGHT - 15, 5.2)
+    sign.Material = Enum.Material.Plastic
+    sign.BrickColor = BrickColor.new("Dark green")
+    sign.Shape = Enum.PartType.Block
+    sign.TopSurface = Enum.SurfaceType.Smooth
+    sign.BottomSurface = Enum.SurfaceType.Smooth
+    sign.LeftSurface = Enum.SurfaceType.Smooth
+    sign.RightSurface = Enum.SurfaceType.Smooth
+    sign.FrontSurface = Enum.SurfaceType.Smooth
+    sign.BackSurface = Enum.SurfaceType.Smooth
+    sign.Anchored = true
+    sign.Parent = signModel
     
-    -- TEXTO TRASERO - SIN SURFACEGUI
-    -- Eliminando completamente el SurfaceGui trasero
+    -- TEXTO WELCOME TO
+    local welcomePart = Instance.new("Part")
+    welcomePart.Name = "WelcomeText"
+    welcomePart.Size = Vector3.new(30, 4, 0.1)
+    welcomePart.Position = Vector3.new(0, SIGN_CONFIG.POLE_HEIGHT - 12, 5.5)
+    welcomePart.Material = Enum.Material.Neon
+    welcomePart.BrickColor = BrickColor.new("Institutional white")
+    welcomePart.Anchored = true
+    welcomePart.Parent = signModel
+    
+    -- TEXTO HAWKINS
+    local hawkinsPart = Instance.new("Part")
+    hawkinsPart.Name = "HawkinsText"
+    hawkinsPart.Size = Vector3.new(35, 6, 0.1)
+    hawkinsPart.Position = Vector3.new(0, SIGN_CONFIG.POLE_HEIGHT - 17, 5.5)
+    hawkinsPart.Material = Enum.Material.Neon
+    hawkinsPart.BrickColor = BrickColor.new("Really red")
+    hawkinsPart.Anchored = true
+    hawkinsPart.Parent = signModel
     
     -- LUCES DECORATIVAS
     for i = 1, 4 do
@@ -125,11 +136,11 @@ local function createHawkinsSign()
         light.Parent = signModel
         
         -- Posicionar luces en las esquinas
-        local xPos = (i <= 2) and -SIGN_CONFIG.SIGN_WIDTH/2 + 4 or SIGN_CONFIG.SIGN_WIDTH/2 - 4
-        local yPos = (i == 1 or i == 3) and sign.Position.Y + SIGN_CONFIG.SIGN_HEIGHT/2 - 2 or sign.Position.Y - SIGN_CONFIG.SIGN_HEIGHT/2 + 2
-        light.Position = Vector3.new(xPos, yPos, sign.Position.Z + 2)
+        local xPos = (i <= 2) and -SIGN_CONFIG.SIGN_WIDTH/2 + 3 or SIGN_CONFIG.SIGN_WIDTH/2 - 3
+        local yPos = (i == 1 or i == 3) and (SIGN_CONFIG.POLE_HEIGHT - 15) + SIGN_CONFIG.SIGN_HEIGHT/2 - 2 or (SIGN_CONFIG.POLE_HEIGHT - 15) - SIGN_CONFIG.SIGN_HEIGHT/2 + 2
+        light.Position = Vector3.new(xPos, yPos, 6)
         
-        -- Efecto de parpadeo SIMPLE
+        -- Efecto de parpadeo
         spawn(function()
             while light.Parent do
                 wait(math.random(2, 5))
@@ -140,69 +151,30 @@ local function createHawkinsSign()
     end
     
     -- SOLDADURA DE TODAS LAS PARTES
-    local function weldParts()
-        local function weldTo(part1, part2)
-            local weld = Instance.new("WeldConstraint")
-            weld.Part0 = part1
-            weld.Part1 = part2
-            weld.Parent = part1
-        end
-        
-        -- Soldar todo al poste principal
-        weldTo(pole, base)
-        weldTo(pole, support)
-        weldTo(pole, sign)
-        weldTo(pole, border)
-        
-        -- Soldar luces
-        for _, child in pairs(signModel:GetChildren()) do
-            if child.Name:find("Light") then
-                weldTo(pole, child)
-            end
-        end
+    local function weldTo(part1, part2)
+        local weld = Instance.new("WeldConstraint")
+        weld.Part0 = part1
+        weld.Part1 = part2
+        weld.Parent = part1
     end
     
-    -- SOLDADURA DE TODAS LAS PARTES
-    local function weldParts()
-        local function weldTo(part1, part2)
-            local weld = Instance.new("WeldConstraint")
-            weld.Part0 = part1
-            weld.Part1 = part2
-            weld.Parent = part1
-        end
-        
-        -- Soldar todo al poste principal
-        weldTo(pole, base)
-        weldTo(pole, support)
-        weldTo(pole, sign)
-        weldTo(pole, border)
-        
-        -- Soldar luces
-        for _, child in pairs(signModel:GetChildren()) do
-            if child.Name:find("Light") then
-                weldTo(pole, child)
-            end
+    -- Soldar todo al poste principal
+    weldTo(pole, base)
+    weldTo(pole, support)
+    weldTo(pole, border)
+    weldTo(pole, sign)
+    weldTo(pole, welcomePart)
+    weldTo(pole, hawkinsPart)
+    
+    -- Soldar luces
+    for _, child in pairs(signModel:GetChildren()) do
+        if child.Name:find("Light") then
+            weldTo(pole, child)
         end
     end
-    
-    -- TEXTO CON DECALS (NO SIGUE AL JUGADOR)
-    local welcomeDecal = Instance.new("Decal")
-    welcomeDecal.Texture = "rbxasset://textures/face.png"
-    welcomeDecal.Face = Enum.NormalId.Front
-    welcomeDecal.Parent = sign
-    
-    local hawkinsDecal = Instance.new("Decal")
-    hawkinsDecal.Texture = "rbxasset://textures/face.png"
-    hawkinsDecal.Face = Enum.NormalId.Back
-    hawkinsDecal.Parent = sign
-    
-    weldParts()
     
     -- HACER SOLO EL POSTE MOVIBLE
     pole.Anchored = false
-    
-    -- ELIMINAR TODOS LOS EFECTOS Y UI QUE CAUSAN PROBLEMAS
-    -- No BodyPosition, no BodyAngularVelocity, no efectos
     
     print("Cartel de Hawkins creado exitosamente!")
     return signModel
