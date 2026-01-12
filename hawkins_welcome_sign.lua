@@ -6,11 +6,11 @@ local TweenService = game:GetService("TweenService")
 
 -- Configuración del cartel
 local SIGN_CONFIG = {
-    POLE_HEIGHT = 25,
-    POLE_WIDTH = 1,
-    SIGN_WIDTH = 12,
-    SIGN_HEIGHT = 6,
-    SIGN_THICKNESS = 0.5
+    POLE_HEIGHT = 50,
+    POLE_WIDTH = 2,
+    SIGN_WIDTH = 20,
+    SIGN_HEIGHT = 10,
+    SIGN_THICKNESS = 1
 }
 
 -- Función para crear el cartel completo
@@ -23,10 +23,10 @@ local function createHawkinsSign()
     -- BASE DEL POSTE
     local base = Instance.new("Part")
     base.Name = "Base"
-    base.Size = Vector3.new(3, 1, 3)
-    base.Position = Vector3.new(0, 0.5, 0)
+    base.Size = Vector3.new(6, 2, 6)
+    base.Position = Vector3.new(0, 1, 0)
     base.Material = Enum.Material.Concrete
-    base.Color = Color3.new(0.4, 0.4, 0.4)
+    base.BrickColor = BrickColor.new("Dark stone grey")
     base.Anchored = true
     base.Parent = signModel
     
@@ -34,19 +34,19 @@ local function createHawkinsSign()
     local pole = Instance.new("Part")
     pole.Name = "Pole"
     pole.Size = Vector3.new(SIGN_CONFIG.POLE_WIDTH, SIGN_CONFIG.POLE_HEIGHT, SIGN_CONFIG.POLE_WIDTH)
-    pole.Position = Vector3.new(0, SIGN_CONFIG.POLE_HEIGHT/2 + 1, 0)
+    pole.Position = Vector3.new(0, SIGN_CONFIG.POLE_HEIGHT/2 + 2, 0)
     pole.Material = Enum.Material.Metal
-    pole.Color = Color3.new(0.2, 0.2, 0.2)
+    pole.BrickColor = BrickColor.new("Really black")
     pole.Anchored = true
     pole.Parent = signModel
     
     -- SOPORTE HORIZONTAL
     local support = Instance.new("Part")
     support.Name = "Support"
-    support.Size = Vector3.new(SIGN_CONFIG.SIGN_WIDTH + 2, 0.5, 0.5)
-    support.Position = Vector3.new(0, SIGN_CONFIG.POLE_HEIGHT - 2, 0)
+    support.Size = Vector3.new(SIGN_CONFIG.SIGN_WIDTH + 4, 1, 1)
+    support.Position = Vector3.new(0, SIGN_CONFIG.POLE_HEIGHT - 3, 0)
     support.Material = Enum.Material.Metal
-    support.Color = Color3.new(0.2, 0.2, 0.2)
+    support.BrickColor = BrickColor.new("Really black")
     support.Anchored = true
     support.Parent = signModel
     
@@ -54,19 +54,19 @@ local function createHawkinsSign()
     local sign = Instance.new("Part")
     sign.Name = "Sign"
     sign.Size = Vector3.new(SIGN_CONFIG.SIGN_WIDTH, SIGN_CONFIG.SIGN_HEIGHT, SIGN_CONFIG.SIGN_THICKNESS)
-    sign.Position = Vector3.new(0, SIGN_CONFIG.POLE_HEIGHT - 5, 0)
+    sign.Position = Vector3.new(0, SIGN_CONFIG.POLE_HEIGHT - 8, 0)
     sign.Material = Enum.Material.SmoothPlastic
-    sign.Color = Color3.new(0.1, 0.3, 0.1)
+    sign.BrickColor = BrickColor.new("Dark green")
     sign.Anchored = true
     sign.Parent = signModel
     
     -- BORDE DEL CARTEL
     local border = Instance.new("Part")
     border.Name = "Border"
-    border.Size = Vector3.new(SIGN_CONFIG.SIGN_WIDTH + 0.5, SIGN_CONFIG.SIGN_HEIGHT + 0.5, SIGN_CONFIG.SIGN_THICKNESS + 0.1)
-    border.Position = sign.Position
+    border.Size = Vector3.new(SIGN_CONFIG.SIGN_WIDTH + 1, SIGN_CONFIG.SIGN_HEIGHT + 1, SIGN_CONFIG.SIGN_THICKNESS - 0.2)
+    border.Position = Vector3.new(0, sign.Position.Y, sign.Position.Z - 0.1)
     border.Material = Enum.Material.Metal
-    border.Color = Color3.new(0.8, 0.8, 0.8)
+    border.BrickColor = BrickColor.new("Mid gray")
     border.Anchored = true
     border.Parent = signModel
     
@@ -114,17 +114,17 @@ local function createHawkinsSign()
     for i = 1, 4 do
         local light = Instance.new("Part")
         light.Name = "Light" .. i
-        light.Size = Vector3.new(0.3, 0.3, 0.3)
+        light.Size = Vector3.new(1, 1, 1)
         light.Shape = Enum.PartType.Ball
         light.Material = Enum.Material.Neon
-        light.Color = Color3.new(1, 1, 0.8)
+        light.BrickColor = BrickColor.new("Bright yellow")
         light.Anchored = true
         light.Parent = signModel
         
         -- Posicionar luces en las esquinas
-        local xPos = (i <= 2) and -SIGN_CONFIG.SIGN_WIDTH/2 + 1 or SIGN_CONFIG.SIGN_WIDTH/2 - 1
-        local yPos = (i == 1 or i == 3) and sign.Position.Y + SIGN_CONFIG.SIGN_HEIGHT/2 - 0.5 or sign.Position.Y - SIGN_CONFIG.SIGN_HEIGHT/2 + 0.5
-        light.Position = Vector3.new(xPos, yPos, sign.Position.Z + 0.5)
+        local xPos = (i <= 2) and -SIGN_CONFIG.SIGN_WIDTH/2 + 2 or SIGN_CONFIG.SIGN_WIDTH/2 - 2
+        local yPos = (i == 1 or i == 3) and sign.Position.Y + SIGN_CONFIG.SIGN_HEIGHT/2 - 1 or sign.Position.Y - SIGN_CONFIG.SIGN_HEIGHT/2 + 1
+        light.Position = Vector3.new(xPos, yPos, sign.Position.Z + 1)
         
         -- Efecto de parpadeo
         spawn(function()
