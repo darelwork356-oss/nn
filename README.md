@@ -38,11 +38,8 @@ Un juego completo de simulación escolar para Roblox inspirado en High School Si
 
 ## 🚀 Instalación y Configuración
 
-### Archivos Principales:
-1. **GameManager.lua** - Script principal del servidor
-2. **ClientGUI.lua** - Interfaz de usuario del cliente
-3. **MapBuilder.lua** - Constructor del mapa escolar
-4. **CustomizationSystem.lua** - Sistema de personalización
+### Archivo Principal:
+**HighSchoolSimulator.lua** - Script completo del servidor (TODO EN UNO)
 
 ### Pasos de Instalación:
 
@@ -50,17 +47,13 @@ Un juego completo de simulación escolar para Roblox inspirado en High School Si
    - Abre Roblox Studio
    - Crea un nuevo lugar/juego
 
-2. **Configurar Scripts del Servidor**
-   - Coloca `GameManager.lua` en ServerScriptService
-   - Coloca `MapBuilder.lua` en ServerScriptService
-   - Coloca `CustomizationSystem.lua` en ServerScriptService
+2. **Instalar el Script**
+   - Coloca `HighSchoolSimulator.lua` en **ServerScriptService**
+   - ¡Eso es todo!
 
-3. **Configurar Script del Cliente**
-   - Coloca `ClientGUI.lua` en StarterPlayer > StarterPlayerScripts
-
-4. **Ejecutar el Juego**
+3. **Ejecutar el Juego**
    - Presiona F5 para probar el juego
-   - El mapa se construirá automáticamente
+   - El mapa, GUI y todos los sistemas se crearán automáticamente
 
 ## 🎮 Cómo Jugar
 
@@ -70,9 +63,9 @@ Un juego completo de simulación escolar para Roblox inspirado en High School Si
 - **Mouse** - Mirar alrededor
 - **Click** - Interactuar con objetos
 
-### Comandos de Chat:
-- `/customize` o `/personalizar` - Abrir menú de personalización
+### Comandos:
 - Haz click en las puertas de las aulas para unirte a clases
+- Usa los botones de la GUI para unirte a clases
 
 ### Interfaz de Usuario:
 - **Pestaña Stats** - Ver tus estadísticas actuales
@@ -90,31 +83,18 @@ Un juego completo de simulación escolar para Roblox inspirado en High School Si
 ## 🔧 Personalización y Configuración
 
 ### Modificar Configuraciones:
-En `GameManager.lua`, puedes ajustar:
+En `HighSchoolSimulator.lua`, busca la sección CONFIGURACIÓN:
 ```lua
-local GameConfig = {
-    ClassDuration = 300,    -- Duración de clases (segundos)
-    BreakDuration = 120,    -- Duración de descansos
-    -- Más configuraciones...
+local Config = {
+    Classes = {"Matemáticas", "Ciencias", "Historia", "Inglés", "Ed. Física", "Arte", "Música", "Informática"},
+    ClassDuration = 180,    -- Duración de clases (segundos)
+    BreakDuration = 60,     -- Duración de descansos
+    StartingMoney = 100     -- Dinero inicial
 }
 ```
 
 ### Añadir Nuevas Materias:
-```lua
-Classes = {
-    "Matemáticas", "Ciencias", "Historia", "Inglés", 
-    "Educación Física", "Arte", "Música", "Informática",
-    "Tu Nueva Materia" -- Añadir aquí
-}
-```
-
-### Personalizar Uniformes:
-En `CustomizationSystem.lua`:
-```lua
-Uniforms = {
-    {Name = "Nuevo Uniforme", Color = Color3.fromRGB(R, G, B), Price = 100}
-}
-```
+Simplemente añade el nombre a la lista de Classes en Config
 
 ## 📊 Sistemas Técnicos
 
